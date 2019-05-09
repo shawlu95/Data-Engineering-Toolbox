@@ -1,5 +1,9 @@
 ### Introduction to Google Cloud Platform
-This course offers a brief overview of Google Cloud Platform. The objective is to understand what each cloud service does, and its counterpart in AWS.
+This folder contains notes for two online courses: 
+* Introduction to Google Cloud Platform ([link](https://acloud.guru/learn/gcp-101)).
+* Google Cloud Platform Big Data and Machine Learning Fundamentals ([link](https://www.coursera.org/learn/gcp-big-data-ml-fundamentals)).
+
+The two courses offer a brief overview of Google Cloud Platform. The objective is to understand what each cloud service does, and its counterpart in AWS.
 ![alt-text](figs/timeline.png)
 
 #### Essentials
@@ -35,14 +39,13 @@ This course offers a brief overview of Google Cloud Platform. The objective is t
 * Storage: Local SSD, Persistent Disk, Big Query, Cloud SQL/Spanner/Bigtable/Datastore/FireStore ([note](102_storage.md)).
 * Networking: Domains, DNS, CLB, CDN, VPC, VPN, Interconnect, Router ([note](103_networking.md)).
 * Machine Learning: Cloud ML, Vision API, Speech API, NLP API, Translation, Diaglogflow, Video Intelligence, Cloud Job Discovery ([note](104_machine_learning.md)).
-* Big Data: IoT Core, Cloud Pub/Sub, Cloud Dataprep, Cloud Dataproc, Cloud Dataflow, Cloud Datalab, Cloud Data Studio, Cloud Genomics ([note](105_big_data.md)).
+* Big Data: IoT Core, Cloud Pub/Sub, Cloud Dataprep, Cloud Dataproc, Cloud Dataflow, Cloud Datalab, Cloud Data Studio, Cloud Genomics ([note](105_big_data_analytics.md)).
 * Roles and Security: Cloud IAM, Service Account, Cloud Identity, Security Key Enforcement, Resource Manager, Cloud Audit Logging, Cloud Key Management Service, Cloud IAP, Security Scanner, Cloud Data Loss Prevention API ([note](106_IAM.md)).
 * Operations Management: Stackdriver Monitoring, Logging, Error Reporting, Trace, Debugger, Deployment Manager, Billing API ([note](107_operations_management.md)).
 * Development: Cloud Source Repositories, Container Builder & Registry, Cloud Endpoints, Apigee API Platform, Test Lab for Android ([note](108_dev_API.md)).
 
 #### Useful Links
 * Why Google Cloud: https://cloud.google.com/why-google/
-* Course Link: https://acloud.guru/learn/gcp-101
 * Publication database: https://ai.google/research/pubs
 * Google Cloud Platform: https://cloud.google.com/
 * Data Center: https://www.google.com/about/datacenters/
