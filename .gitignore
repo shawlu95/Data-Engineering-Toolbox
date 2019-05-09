@@ -1,3 +1,18 @@
+# custom
+.DS_Store
+.ipynb_checkpoints/
+.idea/
+doc/
+inputs/
+outputs/
+*.pem
+master/
+tf_logs/
+datasets/
+credentials.py
+*.xml
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
