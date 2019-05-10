@@ -65,7 +65,7 @@ fi
 ### Submitting Tasks
 The three programs are "snapshots" from a development process. Each program builds on and enhances the one before it. Examining and running each program shows you how to progressively develop a Dataproc/Spark + Machine Learning application.
 
-#### Task 1
+#### Task 1 [01-dataprocML.py](https://github.com/shawlu95/training-data-analyst/blob/master/courses/unstructured/01-dataprocML.py)
 This program is just a Python program. It will run on Dataproc, but it does not make use of any of the big data features. The program creates a sample line of text in memory and then passes it to the Natural Language Processing service for Sentiment Analysis.
 
 The function SentimentAnalysis() is a wrapper around the REST API. This code creates the structured format of the request and passes the request along with the API Key.
@@ -118,7 +118,7 @@ qwiklabs-gcp-968cc3e724ddeff8
 Job output is complete
 ```
 
-#### Task 2: Sentiment Analysis with Spark
+#### Task 2: Sentiment Analysis with Spark [02-dataprocML.py](https://github.com/shawlu95/training-data-analyst/blob/master/courses/unstructured/02-dataprocML.py)
 Copy a text file to bucket:
 ```bash
 gsutil cp /training/road-not-taken.txt gs://$BUCKET/sampledata/road-not-taken.txt
@@ -152,7 +152,7 @@ Job output is complete
 ```
 
 
-#### Task 3: Doing Something Useful
+#### Task 3: Doing Something Useful [03-dataprocML.py](https://github.com/shawlu95/training-data-analyst/blob/master/courses/unstructured/03-dataprocML.py)
 **Submit**: in Dataproc -> Jobs, submit job with PySpark type, in same region, and main Python file `gs://<bucket name>/02-dataprocML.py`. Equivalent command line:
 ```bash
 gcloud dataproc jobs wait job-40e7e0d4 --project qwiklabs-gcp-968cc3e724ddeff8 --region us-central1
