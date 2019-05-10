@@ -1,5 +1,5 @@
 ### Introduction to Google Cloud Platform
-This folder contains notes for two online courses:
+This folder contains Notes for two online courses:
 * *Introduction to Google Cloud Platform*([link](https://acloud.guru/learn/gcp-101)).
 * *Google Cloud Platform Big Data and Machine Learning Fundamentals* ([link](https://www.coursera.org/learn/gcp-big-data-ml-fundamentals)).
 
@@ -35,14 +35,22 @@ The two courses offer a brief overview of Google Cloud Platform. The objective i
 * Projects can be grouped in hierarchy.
 
 #### Lecture Notes
-* Compute: Compute Engine, Kubernetes Engine, App Engine, Cloud Functions ([note](101_compute.md)).
-* Storage: Local SSD, Persistent Disk, Big Query, Cloud SQL/Spanner/Bigtable/Datastore/FireStore ([note](102_storage.md)).
-* Networking: Domains, DNS, CLB, CDN, VPC, VPN, Interconnect, Router ([note](103_networking.md)).
-* Machine Learning: Cloud ML, Vision API, Speech API, NLP API, Translation, Diaglogflow, Video Intelligence, Cloud Job Discovery ([note](104_machine_learning.md)).
-* Big Data: IoT Core, Cloud Pub/Sub, Cloud Dataprep, Cloud Dataproc, Cloud Dataflow, Cloud Datalab, Cloud Data Studio, Cloud Genomics ([note](105_big_data_analytics.md)).
-* Roles and Security: Cloud IAM, Service Account, Cloud Identity, Security Key Enforcement, Resource Manager, Cloud Audit Logging, Cloud Key Management Service, Cloud IAP, Security Scanner, Cloud Data Loss Prevention API ([note](106_IAM.md)).
-* Operations Management: Stackdriver Monitoring, Logging, Error Reporting, Trace, Debugger, Deployment Manager, Billing API ([note](107_operations_management.md)).
-* Development: Cloud Source Repositories, Container Builder & Registry, Cloud Endpoints, Apigee API Platform, Test Lab for Android ([note](108_dev_API.md)).
+* **Compute**: Compute Engine, Kubernetes Engine, App Engine, Cloud Functions ([Note](101_compute.md)).
+* **Storage**: Local SSD, Persistent Disk, Big Query, Cloud SQL/Spanner/Bigtable/Datastore/FireStore ([Note](102_storage.md)).
+* **Networking**: Domains, DNS, CLB, CDN, VPC, VPN, Interconnect, Router ([Note](103_networking.md)).
+* **Machine Learning**: Cloud ML, Vision API, Speech API, NLP API, Translation, Diaglogflow, Video Intelligence, Cloud Job Discovery ([Note](104_machine_learning.md)).
+* **Big Data**: IoT Core, Cloud Pub/Sub, Cloud Dataprep, Cloud Dataproc, Cloud Dataflow, Cloud Datalab, Cloud Data Studio, Cloud Genomics ([Note](105_big_data_analytics.md)).
+* **Roles and Security**: Cloud IAM, Service Account, Cloud Identity, Security Key Enforcement, Resource Manager, Cloud Audit Logging, Cloud Key Management Service, Cloud IAP, Security Scanner, Cloud Data Loss Prevention API ([Note](106_IAM.md)).
+* **Operations Management**: Stackdriver Monitoring, Logging, Error Reporting, Trace, Debugger, Deployment Manager, Billing API ([Note](107_operations_management.md)).
+* **Development**: Cloud Source Repositories, Container Builder & Registry, Cloud Endpoints, Apigee API Platform, Test Lab for Android ([Note](108_dev_API.md)).
+
+#### Labs
+1. Create a Compute Engine Instance ([Note](labs/lab_1.md)).
+2. Interact with Google Cloud Storage ([Note](labs/lab_2.md)).
+3. Setup Rentals Data in Cloud SQL ([Note](labs/lab_3.md)).
+4. Recommendations ML with Dataproc ([Note](labs/lab_4.md)).
+5. Create ML Dataset with BigQuery ([Note](labs/lab_5.md)).
+6. Big Data & ML Fundamentals Lab 6: Carry out ML with TensorFlow ([Note](labs/lab_6.md)).
 
 #### Useful Links
 * Why Google Cloud: https://cloud.google.com/why-google/

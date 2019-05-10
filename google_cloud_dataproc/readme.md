@@ -91,3 +91,11 @@ PySpark is a Read-Evaluate-Print-Loop (REPL) interpreter. Also known as a langua
 A Resilient Distributed Dataset (RDD) is an abstraction over data in storage. The RDD is opaque to the location and replication of data it contains. For reliability, RDDs are resilient (fault-tolerant) to data loss due to node failures. An RDD lineage graph is used to recompute damaged or missing partitions. And for efficiency, Spark might choose to process one part in one location or another, based on availability of CPU at that location, or based on network latency or proximity to other resources.
 
 The benefit of this abstraction is that it enables operations on an RDD to treat the RDD as a single object and ignore the complexity of how data is located, replicated, and migrated inside the RDD. All those details are left to Spark.
+
+#### Labs
+1. Create environment variables in Cloud Shell ([Note](lab_1.md)).
+2. Work with structured and semi-structured data ([Note](lab_2.md)).
+3. Submit Dataproc jobs for unstructured data ([Note](lab_3.md)).
+4. PySpark Jobs & Cloud Storage ([Note](lab_4.md)).
+5. Cluster automation using CLI commands ([Note](lab_5.md)).
+6. PySpark Machine Learning ([Note](lab_6.md)).

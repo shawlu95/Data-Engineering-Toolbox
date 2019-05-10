@@ -1,4 +1,4 @@
-### Create a Compute Engine Instance v1.3
+### Create a Compute Engine Instance
 
 #### Create Compute Engine instance with the necessary API access
 To create a Compute Engine instance:

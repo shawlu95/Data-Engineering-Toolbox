@@ -1,4 +1,4 @@
-### Big Data & ML Fundamentals Lab 6: Carry out ML with TensorFlow v1.3
+### Big Data & ML Fundamentals Lab 6: Carry out ML with TensorFlow
 
 #### Datalab
 To launch Cloud Datalab:

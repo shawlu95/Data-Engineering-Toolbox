@@ -1,4 +1,4 @@
-### Machine Learning
+### PySpark Machine Learning
 #### Objective
 Add Machine Learning (ML) to a Spark application.
 

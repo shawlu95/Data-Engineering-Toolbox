@@ -1,4 +1,4 @@
-#### PySpark Jobs & Cloud Storage
+### PySpark Jobs & Cloud Storage
 
 #### Objective
 * Explore Spark using PySpark jobs
@@ -66,4 +66,4 @@ spark.stop()
 #### Take-away:
 * HDFS is still used temporarily, to connect Cloud Storage and Dataproc clusters.
 * Because data transfer is so fast, it's okay to copy from Cloud Storage, rendering the server stateless.
-* Modifying an existing program is simple as replacing the file location from `hdfs://` to `gs://` 
+* Modifying an existing program is simple as replacing the file location from `hdfs://` to `gs://`

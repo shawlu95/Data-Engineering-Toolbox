@@ -1,4 +1,4 @@
-### Lab 2: Interact with Google Cloud Storage v1.3
+### Lab 2: Interact with Google Cloud Storage
 
 #### Ingesting Data
 To view information about the Compute Engine instance you just launched, type the following into your SSH terminal: `cat /proc/cpuinfo`.

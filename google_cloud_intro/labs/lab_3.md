@@ -1,4 +1,4 @@
-### What you learn
+### Setup Rentals Data in Cloud SQL
 
 In this lab, you will:
 1. Create Cloud SQL instance
