@@ -68,13 +68,7 @@ The three programs are "snapshots" from a development process. Each program buil
 #### Task 1 [01-dataprocML.py](https://github.com/shawlu95/training-data-analyst/blob/master/courses/unstructured/01-dataprocML.py)
 This program is just a Python program. It will run on Dataproc, but it does not make use of any of the big data features. The program creates a sample line of text in memory and then passes it to the Natural Language Processing service for Sentiment Analysis.
 
-The function SentimentAnalysis() is a wrapper around the REST API. This code creates the structured format of the request and passes the request along with the API Key.
-
-Why is the output printed using a json.dumps?
-
-You could do post-processing of the returned data using Python.
-
-The stagelabs.sh script you ran in Task 1 should have replaced the DEVSHELL_PROJECT_ID, BUCKET, and APIKEY with your information from the environment variables.
+The `stagelabs.sh` script you ran in Task 1 should have replaced the DEVSHELL_PROJECT_ID, BUCKET, and APIKEY with your information from the environment variables.
 
 **Submit**: in Dataproc -> Jobs, submit job with PySpark type, in same region, and main Python file `gs://<bucket name>/01-dataprocML.py` Equivalent command line:
 
@@ -119,6 +113,8 @@ Job output is complete
 ```
 
 #### Task 2: Sentiment Analysis with Spark [02-dataprocML.py](https://github.com/shawlu95/training-data-analyst/blob/master/courses/unstructured/02-dataprocML.py)
+This program reads a text file and passes to a Natural Language Processing service, sentiment analysis, and processes the results in Spark.
+
 Copy a text file to bucket:
 ```bash
 gsutil cp /training/road-not-taken.txt gs://$BUCKET/sampledata/road-not-taken.txt
@@ -153,6 +149,8 @@ Job output is complete
 
 
 #### Task 3: Doing Something Useful [03-dataprocML.py](https://github.com/shawlu95/training-data-analyst/blob/master/courses/unstructured/03-dataprocML.py)
+This program reads a text file and passes to a Natural Language Processing service, sentiment analysis, and processes the results in Spark.
+
 **Submit**: in Dataproc -> Jobs, submit job with PySpark type, in same region, and main Python file `gs://<bucket name>/02-dataprocML.py`. Equivalent command line:
 ```bash
 gcloud dataproc jobs wait job-40e7e0d4 --project qwiklabs-gcp-968cc3e724ddeff8 --region us-central1
