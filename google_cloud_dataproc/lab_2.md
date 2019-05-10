@@ -3,7 +3,7 @@
 
 #### Preparation
 * Create a Dataproc cluster with tags.
-* Add Firewall rule.
+* Add Firewall rule([IP](http://ip4.me/)).
 * Copy file to HDFS:
 ```bash
 hadoop fs -mkdir /pet-details # create directory
@@ -26,6 +26,7 @@ Cat,Joe,Mix,Black,15
 
 #### Hive
 * Load HDFS file into Hive (after loading, the file is moved from `/pet-details/pet-details.txt` to ` user > hive > warehouse > pets.db > details`). Activate Hive by typing in Cloud Shell: `hive`.
+
 ```SQL
 CREATE DATABASE pets;
 USE pets;
