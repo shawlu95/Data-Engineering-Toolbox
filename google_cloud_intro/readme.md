@@ -1,7 +1,7 @@
 ### Introduction to Google Cloud Platform
-This folder contains notes for two online courses: 
-* Introduction to Google Cloud Platform ([link](https://acloud.guru/learn/gcp-101)).
-* Google Cloud Platform Big Data and Machine Learning Fundamentals ([link](https://www.coursera.org/learn/gcp-big-data-ml-fundamentals)).
+This folder contains notes for two online courses:
+* *Introduction to Google Cloud Platform*([link](https://acloud.guru/learn/gcp-101)).
+* *Google Cloud Platform Big Data and Machine Learning Fundamentals* ([link](https://www.coursera.org/learn/gcp-big-data-ml-fundamentals)).
 
 The two courses offer a brief overview of Google Cloud Platform. The objective is to understand what each cloud service does, and its counterpart in AWS.
 ![alt-text](figs/timeline.png)
