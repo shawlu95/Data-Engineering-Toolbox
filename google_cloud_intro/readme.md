@@ -50,7 +50,7 @@ The two courses offer a brief overview of Google Cloud Platform. The objective i
 3. Setup Rentals Data in Cloud SQL ([Note](labs/lab_3.md)).
 4. Recommendations ML with Dataproc ([Note](labs/lab_4.md)).
 5. Create ML Dataset with BigQuery ([Note](labs/lab_5.md)).
-6. Big Data & ML Fundamentals Lab 6: Carry out ML with TensorFlow ([Note](labs/lab_6.md)).
+6. Carry out ML with TensorFlow ([Note](labs/lab_6.md)).
 
 #### Useful Links
 * Why Google Cloud: https://cloud.google.com/why-google/
