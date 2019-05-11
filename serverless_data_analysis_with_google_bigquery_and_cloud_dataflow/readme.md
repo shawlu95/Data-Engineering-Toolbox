@@ -140,11 +140,44 @@ python ./task.py \
     --runner=DataFlowRunner
 ```
 
+### MapReduce in DataFlow
+#### Map = ParDo
+* Each compute node processes data local to it.
+* Pardo acts on **one** item at a time.
+    - multiple instances of class on many machines.
+    - Should not maintain any state (e.g. average across all data points).
+* Useful for:
+    - Filtering;
+    - Converting variable type;
+    - Extracting parts from input (fields from TableRow);
+    - calculating input from different parts of input (e.g. L2 norm).
+* Example map task (can replace lambda with a generator):
+```python
+'WordLength' >> beam.Map(lambda word: (word, len(word)))
+```
+
+#### Reduce = GroupBy & Combine
+* Group by key is equivalent to `reduceByKey`
+* Combine by key is more efficient than group by key
+    - balances workload across key. A key can be split into multiple workers.
+* Can also group by time.
+
+```python
+# Group By
+cityAndZipcodes = p | beam.Map(lambda fields : (fields[0], fields[3]))
+grouped = cityAndZipcodes | beam.GroupByKey()
+
+# Combine
+totalAmount = salesAmounts | Combine.globally(sum) # each item contains a float
+totalSalesPerPerson = salesRecords | salesRecords.perKey(sum) # each item is key-val pair
+```
+
 #### Labs
 1. Build a BigQuery Query ([Note](lab_1.md)).
 2. Loading and Exporting Data ([Note](lab_2.md)).
 
 #### Resources
+* Training repository ([link](https://github.com/GoogleCloudPlatform/training-data-analyst))
 * BigQuery documentation ([link](https://cloud.google.com/bigquery/docs/)).
 * Tutorials ([link](https://cloud.google.com/bigquery/docs/tutorials))
 * Pricing ([link](https://cloud.google.com/bigquery/pricing))
