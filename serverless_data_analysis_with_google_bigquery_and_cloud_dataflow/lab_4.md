@@ -21,7 +21,7 @@ pip install -U pip
 * Outputs are stored in the `tmp` folder, with prefix `output-` (may be sharded).
 
 #### Local Execution
-* Study the `grep.py` [file](123).
+* Study the `grep.py` [file](https://github.com/shawlu95/training-data-analyst/blob/master/courses/data_analysis/lab2/python/grep.py).
 
 ```Python
 import apache_beam as beam
@@ -59,7 +59,7 @@ cat /tmp/output-* # cat all sharded outputs
 gsutil cp ../javahelp/src/main/java/com/google/cloud/training/dataanalyst/javahelp/*.java gs://$BUCKET/javahelp
 ```
 
-* Execute the `grepc.py` [file](hh)
+* Execute the `grepc.py` [file](https://github.com/shawlu95/training-data-analyst/blob/master/courses/data_analysis/lab2/python/grepc.py)
 
 ```Python
 import apache_beam as beam
