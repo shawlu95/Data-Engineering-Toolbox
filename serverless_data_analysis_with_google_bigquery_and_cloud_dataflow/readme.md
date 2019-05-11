@@ -30,8 +30,9 @@ ___
 * Table name format: `<project>.<dataset>.<table>`
 
 ___
-### Advanced Features
-**Array/Struct** to correlate columns during aggregation.
+#### Advanced Features
+##### Array/Struct
+To correlate columns during aggregation.
 * First bind columns using `ARRAY_AGG`.
 * Unpack columns using `ARRAY(SELECT AS STRUCT ...)`.
 
@@ -67,25 +68,25 @@ return x * y;
 """
 ```
 
-#### Wildcard Tables
+##### Wildcard Tables
 * Richer prefix, faster efficiency!
 * Example: `bigquery-public-data.noaa_gsod.gsod*`
 * Must be enclosed in backtick
 
-#### Partitioning
+##### Partitioning
 * One table may contain a partition column.
 * Time-partitioned table: cost-effective way to manage data.
 * Similar to sharding: a time partition is analogous to a shard.
 
 
-##### Other Shared Features
+###### Other Shared Features
 * Join
 * Windows
 * Regular expression
 
 ___
-### Performance and Pricing
-#### Optimizing Queries
+#### Performance and Pricing
+##### Optimizing Queries
 * Input and output in GB.
 * Shuffle: how many bytes to pass to next stage.
 * Materialization: how many bytes to write.
@@ -93,7 +94,7 @@ ___
 * Check `explanation plan` before running query.
 * Monitor in `StackDriver`.
 
-#### General Guidelines
+##### General Guidelines
 * Minimize columns to be processed. Avoid `SELECT *`.
 * Filter `WHERE` as early as possible to reduce data passed between stages.
 * Avoid self join (squaring number of rows).
@@ -104,7 +105,7 @@ ___
 * Order in the end, on smallest amount of data.
 
 ___
-## Dataflow
+### Dataflow
 * An execution framework: **Apache Beam**.
 * **Pipeline** a directed graph of steps (cann branch, merge, if-else logic).
 * Each step is executed on the cloud by a runner, elasticallt scaled.
@@ -116,7 +117,7 @@ ___
     - Better unique.
     - Two overloaded operator: `|`, `>>`.
 
-### Ingest Data
+#### Ingest Data
 * Source: Pub/Sub, Cloud Storage, BigQuery.
 ```java
 PCollection<string> lines = p.apply(TextIO.Read.from("gs://.../input-*.csv.gz"))
@@ -140,7 +141,6 @@ python ./task.py \
     --runner=DataFlowRunner
 ```
 
-### MapReduce in DataFlow
 #### Map = ParDo
 * Each compute node processes data local to it.
 * Pardo acts on **one** item at a time.
@@ -172,13 +172,34 @@ totalAmount = salesAmounts | Combine.globally(sum) # each item contains a float
 totalSalesPerPerson = salesRecords | salesRecords.perKey(sum) # each item is key-val pair
 ```
 
-#### Labs
+#### Multiple Sources of PCollections
+* Take the smaller source, and convert into a view.
+* Pass in view as a side input.
+* Retrieve side input from the processing function.
+
+#### Dataflow Template
+The templates help separate the development activities and the developers from the execution activities and the users. The user environment no longer has dependencies back to the development environment.
+
+___
+### Dataprep
+Dataprep is an interactive graphical system for preparing structured or unstructured data for use in analytics such as BigQuery, visualization like, Data Studio and to train machine learning models.
+* Tools for data cleanup, structuring, and transformation.
+
+___
+### Labs
 1. Build a BigQuery Query ([Note](lab_1.md)).
 2. Loading and Exporting Data ([Note](lab_2.md)).
+3. Advanced SQL Queries ([Note](lab_3.md)).
+4. A Simple Dataflow Pipeline ([Note](lab_4.md)).
+5. MapReduce in Dataflow ([Note](lab_5.md)).
+6. Side Inputs ([Note](lab_6.md)).
 
-#### Resources
+### Resources
 * Training repository ([link](https://github.com/GoogleCloudPlatform/training-data-analyst))
 * BigQuery documentation ([link](https://cloud.google.com/bigquery/docs/)).
 * Tutorials ([link](https://cloud.google.com/bigquery/docs/tutorials))
 * Pricing ([link](https://cloud.google.com/bigquery/pricing))
 * Client libraries ([link](https://cloud.google.com/bigquery/client-libraries))
+* Cloud Dataflow ([link](http://cloud.google.com/dataflow/))
+* Dataprep ([link](https://cloud.google.com/dataprep/))
+* Training ([link](https://cloud.google.com/solutions/processing-logs-at-scale-using-dataflow))
