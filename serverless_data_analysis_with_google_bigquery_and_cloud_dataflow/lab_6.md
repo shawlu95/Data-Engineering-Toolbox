@@ -22,6 +22,9 @@ python JavaProjectsThatNeedHelp.py --bucket $BUCKET --project $DEVSHELL_PROJECT_
 ```
 
 Cloud execution. Monitor progress in `DataFlow`
+```bash
+python JavaProjectsThatNeedHelp.py --bucket $BUCKET --project $DEVSHELL_PROJECT_ID --DataFlowRunner
+```
 
 Output (first 5 lines):
 ```
