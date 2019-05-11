@@ -7,6 +7,16 @@ Second generation: Dremel and Pub/Sub that auto-scale.
 
 ![alt-text](figs/workflow.png)
 
+#### Normalizing vs. Denormalizing
+* **Normalize**: Normalizing the data means turning it into a relational system. This stores the data efficiently and makes query processing a clear and direct task.
+* **De-normalize**: Denormalizing is the strategy of accepting repeated fields in the data to gain processing performance. Data must be normalized before it can be denormalized.
+    - further increases orderliness.
+    - no longer relational, boosting efficiency, in parallel in columnar processing.
+    - Takes more storage space.
+* Nested fields combine the two (no example given).
+
+___
+### BigQuery
 #### Advantage of BigQuery
 * Interactive analysis at petabyte-scale for business intelligence (near-real time, for immediate, transaction-level response, use Cloud SQL/Spanner)
 * No-ops: pay for amount of data scanned.
@@ -18,14 +28,6 @@ Second generation: Dremel and Pub/Sub that auto-scale.
 * No indices, partitions or keys is required (partitions can be used to reduce cost).
 * To save cost, limit the column to scan.
 * Table name format: `<project>.<dataset>.<table>`
-
-#### Normalizing vs. Denormalizing
-* **Normalize**: Normalizing the data means turning it into a relational system. This stores the data efficiently and makes query processing a clear and direct task.
-* **De-normalize**: Denormalizing is the strategy of accepting repeated fields in the data to gain processing performance. Data must be normalized before it can be denormalized.
-    - further increases orderliness.
-    - no longer relational, boosting efficiency, in parallel in columnar processing.
-    - Takes more storage space.
-* Nested fields combine the two (no example given).
 
 ___
 ### Advanced Features
@@ -100,6 +102,43 @@ ___
 * Built-in function > custom SQL function > JS CDFs.
 * Use `APPROX_COUNT_DISTINCT` instead of `EXACT COUNT(DISTINCT)`.
 * Order in the end, on smallest amount of data.
+
+___
+## Dataflow
+* An execution framework: **Apache Beam**.
+* **Pipeline** a directed graph of steps (cann branch, merge, if-else logic).
+* Each step is executed on the cloud by a runner, elasticallt scaled.
+* Can code operation in batch data (window optional) and stream data (window required). Same code that process streaming and batch data.
+* Input and output are `PCollection` (parallel collection).
+    - Supports parallel processing.
+    - Not an in-memory collection; can be unbounded.
+* Every transformation step accepts a name variable, to be visualized in monitoring console.
+    - Better unique.
+    - Two overloaded operator: `|`, `>>`.
+
+### Ingest Data
+* Source: Pub/Sub, Cloud Storage, BigQuery.
+```java
+PCollection<string> lines = p.apply(TextIO.Read.from("gs://.../input-*.csv.gz"))
+PCollection<string> lines = p.apply(PubsubIO.Read.from("input_topic"))
+PCollection<TableRow> rows = p.apply(BigQueryIO.Read.from("SELECT ...;"))
+```
+
+* Sink: Pub/Sub, Cloud Storage, BigQuery.
+```java
+lines.apply(TextIO.Write.to("/data/output").withSuffix(".txt"))
+lines.apply(TextIO.Write.to("/data/output").withSuffix(".txt").withoutSharding()) // no sharding for small task
+```
+
+* Execute task on cloud (python).
+```bash
+python ./task.py \
+    --project=$PROJECT \
+    --job_name=myjob \
+    --staging_location=gs://$BUCKET/staging/ \
+    --temp_location=gs://$BUCKET/staging/ \
+    --runner=DataFlowRunner
+```
 
 #### Labs
 1. Build a BigQuery Query ([Note](lab_1.md)).
