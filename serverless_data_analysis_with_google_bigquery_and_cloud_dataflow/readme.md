@@ -1,4 +1,7 @@
 ### Serverless Data Analysis with Google BigQuery and Cloud Dataflow
+This folder contains notes for the Coursera class *Serverless Data Analysis with Google BigQuery and Cloud Dataflow* ([link](https://www.coursera.org/learn/serverless-data-analysis-bigquery-cloud-dataflow-gcp/home/welcome))
+
+#### Beyond MapReduce
 Disadvantage of MapReduce: sharding data into mappers. Reducers aggregates shards of results. Mixing storage and compute: "The amount of machines that you need to do your compute is going to drive how you're going to split your data."
 
 Second generation: Dremel and Pub/Sub that auto-scale.

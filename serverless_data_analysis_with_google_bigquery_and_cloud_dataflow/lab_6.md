@@ -13,7 +13,7 @@
 #### Code Study
 JavaProjectsThatNeedHelp.py ([file](https://github.com/shawlu95/training-data-analyst/blob/master/courses/data_analysis/lab2/python/JavaProjectsThatNeedHelp.py))
 
-![alt-text](figs/pipeline.png)
+![alt-text](figs/side_input.png)
 
 #### Execute Task
 Local execution. Monitor results in `Storage > Browser`.
