@@ -160,7 +160,7 @@ ___
 4. Refactoring to add batching and feature ([link](lab_4.md)).
 5. Distributed training and monitoring ([link](lab_5.md)).
 6. Scaling up ML using Cloud ML Engine ([link](lab_6.md)).
-7. ([link](lab_7.md)).
+7. Feature Engineering ([link](lab_7.md)).
 
 ### Resources
 * https://cloud.google.com/blog/big-data
