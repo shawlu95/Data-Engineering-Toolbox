@@ -1,6 +1,8 @@
 ### Building Resilient Streaming Systems on Google Cloud Platform
 This folder contains notes for the Coursera class *Building Resilient Streaming Systems on Google Cloud Platform* ([link](https://www.coursera.org/learn/building-resilient-streaming-systems-gcp/home/welcome)).
 
+![alt-text](figs/choice.png)
+
 * Unbounded data are becoming more and more common as sensors become cheaper.
 * Example:
     - traffic on highway (massive, varied, growing);
@@ -94,6 +96,9 @@ Solution – Apache Beam: a unified model to process batch and stream.
     - sliding window: set window duration, and frequency of computation.
     - sessions (how many actions in a single session).
 * Example: Traffic Amount Pub/Sub -> Get Messages -> extract data -> BigQuery
+
+![alt-text](figs/sample_architecture.png)
+
 * Late data: DataFlow learns the `watermark` of a window:
     - `watermark` is a learnable heuristic on how complete is a window (may be incorrect).
     - `trigger`: defines what to do with late data.
@@ -130,6 +135,8 @@ For streaming data **analytics** (not transaction) when BigQuery is not enough.
 * Use web interface or `gcloud` CLI to create cluster of BigTable nodes.
     * Cannot change Cluster ID, zone or storage type after cluster creation.
     * Can use Python or `DataFlow`(preferred) to interact with BigTable.
+
+![alt-text](figs/pointer.png)
 
 #### BigTable Ingesting
 1. Create table.
@@ -173,6 +180,9 @@ For streaming data **analytics** (not transaction) when BigQuery is not enough.
 * Performance increases linearly with number of nodes.
 * Clients & BigTable are in the same zone.
 * Note count directly determines throughput.
+
+![alt-text](figs/complete_architecture.png)
+
 ___
 ### Lab
 1. Publish Streaming Data into PubSub ([link](lab_1.md)).
@@ -182,3 +192,5 @@ ___
 
 ### Reference
 * Data Science on the Google Cloud Platform
+* Google Cloud Platform blog ([link](https://cloudplatform.googleblog.com/)).
+* Big data and machine learning blog ([link](https://cloud.google.com/blog/big-data/)).
