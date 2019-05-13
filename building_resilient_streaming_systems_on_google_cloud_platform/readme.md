@@ -71,3 +71,55 @@ A global, multi-tenanted, managed, real-time messaging services.
 gcloud pubsub subscriptions create --topic sandiego mySub1
 gcloud pubsub subscriptions pull --auto-ack mySub1
 ```
+
+___
+### DataFlow Streaming
+Fully-managed, auto-scaled execution environment for Beam pipelines.
+
+Operations on streaming data:
+* Element-wise transform.
+* Aggregation.
+* Compositing.
+
+Traditional method is to build two pipelines:
+1. Low latency, real time streaming layer.
+2. Batch pipeline layer.
+
+Solution – Apache Beam: a unified model to process batch and stream.
+* Time-based window: use publishing timestamp as event time and place it in right window.
+* **event-time-based finite chunks**: not processing time.
+* Publishing timestamp is system time, and recorded automatically.
+* Different types of window:
+    - fixed size window: hour, day, week, month.
+    - sliding window: set window duration, and frequency of computation.
+    - sessions (how many actions in a single session).
+* Example: Traffic Amount Pub/Sub -> Get Messages -> extract data -> BigQuery
+* Late data: DataFlow learns the `watermark` of a window:
+    - `watermark` is a learnable heuristic on how complete is a window (may be incorrect).
+    - `trigger`: defines what to do with late data.
+#### Coordinating with Pub/Sub
+* Pub/Sub does not preserve order or messages. DataFlow corrects this.
+* Pub/Sub may result in duplicates. DataFlow removes duplicates based on Pub/Sub ID.
+* In case publishers retry same messages, explicitly passing an ID when publishing. DataFlow will use custom ID for de-duplicates.
+
+___
+### BigQuery
+Enabling ad-hoc analysis and dashboard.
+* Ingestion rate: 100,000 rows/table/second.
+* De-duplicate on "best-effort", not guaranteed.
+* For continuous analysis, use Dataflow.
+
+___
+### BigTable & Spanner
+Higher throughput and latency requirement.
+
+___
+### Lab
+1. Publish Streaming Data into PubSub ([link](lab_1.md)).
+2. Streaming Data Pipelines ([link](lab_2.md)).
+3. Streaming Analytics and Dashboards ([link](lab_3.md)).
+4. ([link](lab_4.md)).
+5. ([link](lab_5.md)).
+
+### Reference
+* Data Science on the Google Cloud Platform
