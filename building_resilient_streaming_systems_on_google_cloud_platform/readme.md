@@ -73,7 +73,7 @@ gcloud pubsub subscriptions pull --auto-ack mySub1
 ```
 
 ___
-### DataFlow Streaming
+### DataFlow
 Fully-managed, auto-scaled execution environment for Beam pipelines.
 
 Operations on streaming data:
@@ -110,16 +110,75 @@ Enabling ad-hoc analysis and dashboard.
 * For continuous analysis, use Dataflow.
 
 ___
-### BigTable & Spanner
-Higher throughput and latency requirement.
+### Spanner
+* Horizontally scalable (add nodes), globally consistent
+* Good for: relational database, strong consistency, horizontal scalability, transaction.
+* Financial, inventory application. Provisioning for multinational businesses.
+* Data replicated across multiple zones. Sharded for high throughput.
+* ACID properties as for relational database.
 
+___
+### BigTable
+For streaming data **analytics** (not transaction) when BigQuery is not enough.
+* Milliseconds latency. High throughput.
+* Big (> 1TB) semi-structured or structured.
+* NoSQL: no required transaction or strong relational semantics.
+* Good for: time series, machine learning.
+* **Not cluster-free**: but clusters only contain **pointer** to data.
+    * Also separates computation from storage.
+    * Data remain in colossus (GCS).
+* Use web interface or `gcloud` CLI to create cluster of BigTable nodes.
+    * Cannot change Cluster ID, zone or storage type after cluster creation.
+    * Can use Python or `DataFlow`(preferred) to interact with BigTable.
+
+#### BigTable Ingesting
+1. Create table.
+2. Convert object to Mutation inside a ParDo.
+3. Write Mutations to BigTable
+4. Read from BigTable: HBase API, HBase CLI, BigQuery
+
+#### Design
+* A table only has one key column, called `row key`.
+* No other column can be indexed.
+* Rows are stored in `ACS` order of `row key`.
+* Group columns into `column families`.
+* Wide table design: each column value exists for every row (dense).
+* Narrow (sparse) table design: many columns do not have many data
+    * e.g. rating matrix
+    * follower: row key must encode both follower and followed ID
+* Can query a prefix of the `row key`, better than query entire key.
+    * What is the most common query to support -> become row key prefix.
+    * Rows that are likely pulled in a single query should be stored near each other.
+    * Only need latest few records? Add timestamp to key, in `reversed` format so latest are stored at top.
+* Block Read & Write: better to be continuous in memory.
+* Evenly distributed for read & write: load balancing.
+    * Avoid starting row key as domain (certain domains are extremely active).
+    * Avoid sequential ID (newer customers are more active).
+    * Avoid static identifier (e.g. CPU usage) that gets repeatedly updated.
+
+#### Performance
+* Learn access pattern:
+    - how many nodes it needs to keep running;
+    - where the tablets need to be;
+    - how the tablets need to be split up;
+    - which machines need to process what data.
+* Rebalances data by moving data **pointers** across nodes.
+    - Redistribute reads.
+    - Distribute storage (Cloud Storage).
+* Cluster performance consistent, predictable.
+    - e.g. 220 MB/s scan for SSD, 180 MB/s for HHD (SSD faster).
+* Design schema to minimize data skew.
+* Let BigTable learn before making changes to break bottleneck.
+* Test BigTable with > 300 GB.
+* Performance increases linearly with number of nodes.
+* Clients & BigTable are in the same zone.
+* Note count directly determines throughput.
 ___
 ### Lab
 1. Publish Streaming Data into PubSub ([link](lab_1.md)).
 2. Streaming Data Pipelines ([link](lab_2.md)).
 3. Streaming Analytics and Dashboards ([link](lab_3.md)).
-4. ([link](lab_4.md)).
-5. ([link](lab_5.md)).
+4. Streaming data into Bigtable ([link](lab_4.md)).
 
 ### Reference
 * Data Science on the Google Cloud Platform
