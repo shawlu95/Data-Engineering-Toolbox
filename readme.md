@@ -7,3 +7,12 @@ This repository contains lecture notes, lab notes, and links to helpful resource
 
 #### google_cloud_dataproc ([Open](google_cloud_dataproc))
 * *Leveraging Unstructured Data with Cloud Dataproc on Google Cloud Platform* ([Coursera](https://www.coursera.org/learn/leveraging-unstructured-data-dataproc-gcp/home/welcome))
+
+#### serverless_data_analysis ([Open](serverless_data_analysis))
+* *Serverless Data Analysis with Google BigQuery and Cloud Dataflow* ([Coursera](https://www.coursera.org/learn/serverless-data-analysis-bigquery-cloud-dataflow-gcp/home/welcome))
+
+#### serverless_machine_learning ([Open](serverless_machine_learning))
+* *Serverless Machine Learning with Tensorflow on Google Cloud Platform* ([Coursera](https://www.coursera.org/learn/serverless-machine-learning-gcp/lecture/zhFVo/optimization)).
+
+#### building_resilient_streaming_systems ([Open](building_resilient_streaming_systems))
+* *Building Resilient Streaming Systems on Google Cloud Platform* ([Coursera](https://www.coursera.org/learn/building-resilient-streaming-systems-gcp/home/welcome)).
