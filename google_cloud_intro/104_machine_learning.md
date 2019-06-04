@@ -5,7 +5,7 @@
 * Based on TensorFlow.
 * Integrates: GCS/BQ (storage)l Cloud Datalab(dev), Cloud Dataflow (preprocessing)
 * Support online (low latency) or batch (job time).
-* Can download triqaned model to desktop, mobile, private servers.
+* Can download trained model to desktop, mobile, private servers.
 * `HyperTune`: automatically tybes model hyperparameters.
 
 #### Cloud Vision API (Global)
