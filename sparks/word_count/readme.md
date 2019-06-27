@@ -27,3 +27,35 @@ Submit program to PySpark:
 bin/spark-submit count_word.py pg100.txt word_count
 bin/spark-submit count_letter.py pg100.txt
 ```
+
+___
+#### Letter Count Results
+
+```
+(a, 86000)
+(b, 46001)
+(c, 34983)
+(d, 39173)
+(e, 20409)
+(f, 37186)
+(g, 21167)
+(h, 61028)
+(i, 62420)
+(j, 3372)
+(k, 9535)
+(l, 32389)
+(m, 56252)
+(n, 27313)
+(o, 43712)
+(p, 28059)
+(q, 2388)
+(r, 15234)
+(s, 75226)
+(t, 127781)
+(u, 9230)
+(v, 5801)
+(w, 60097)
+(x, 14)
+(y, 25926)
+(z, 79)
+```
