@@ -1,6 +1,7 @@
-### Word Count
-This directory contains two spark programs: word count and letter count.
+### Word & Letter Count
+This directory contains two spark programs: [count_word.py](count_word.py) and [count_letter.py](count_letter.py). Here are two ways to run the programs: (1) Jupyter notebook; (2) spark-submit.
 
+___
 #### Run in Jyputer
 Install and launch the docker image [jupyter/all-spark-notebook](https://hub.docker.com/r/jupyter/all-spark-notebook/tags). Open [word_count.ipynb](word_count.ipynb).
 
@@ -9,6 +10,7 @@ Install and launch the docker image [jupyter/all-spark-notebook](https://hub.doc
 docker run -p 10000:8888 jupyter/all-spark-notebook:d4cbf2f80a2a
 ```
 
+___
 #### Submit to Spark
 Run Spark in development mode:
 
