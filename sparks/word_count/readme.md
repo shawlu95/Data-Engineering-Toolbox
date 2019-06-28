@@ -29,8 +29,23 @@ bin/spark-submit count_letter.py pg100.txt
 ```
 
 ___
-#### Letter Count Results
+#### Results
 
+Word count (top 10):
+```
+('', 197060),
+('the', 23455),
+('I', 22225),
+('and', 18715),
+('to', 16433),
+('of', 15830),
+('a', 12851),
+('you', 12236),
+('my', 10840),
+('in', 10074)
+```
+
+Letter count:
 ```
 (a, 86000)
 (b, 46001)
