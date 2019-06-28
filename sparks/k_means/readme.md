@@ -16,4 +16,4 @@ Python script: [k_means.py](k_means.py)
 ../../bin/spark-submit k_means.py
 ```
 
-![alt-text](output/combined.png)
+![alt-text](output/output.png)
