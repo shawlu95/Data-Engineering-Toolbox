@@ -19,13 +19,13 @@ bin/pyspark
 ```
 
 Submit program to PySpark:
-* Python script: `count_letter.py`
-* Input file: `pg100.txt`
+* Python script: [count_letter.py](count_letter.py), [count_word.py](count_word.py)
+* Input file: [g100.txt](data/g100.txt)
 * Output directory: `word_count` (must not exist yet)
 
 ```bash
-bin/spark-submit count_word.py pg100.txt word_count
-bin/spark-submit count_letter.py pg100.txt
+../../bin/spark-submit count_word.py data/pg100.txt word_count
+../../bin/spark-submit count_letter.py data/pg100.txt
 ```
 
 ___
