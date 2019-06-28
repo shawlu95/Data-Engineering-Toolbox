@@ -39,5 +39,5 @@ Jupyter notebook: [recommend_friends.ipynb](recommend_friends.ipynb)
 
 Python script: [recommend_friends.py](recommend_friends.py)
 ```bash
-bin/spark-submit hw1/q1/q1_code.py hw1/q1/data/soc-LiveJournal1Adj.txt
+bin/spark-submit recommend_friends.py soc-LiveJournal1Adj.txt
 ```
