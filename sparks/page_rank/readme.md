@@ -1,3 +1,13 @@
+### Lineage
+For long iterative algorithm, there is risk of stack overflow. Solution: checkpointing.
+```python
+for i in range(100000):
+  rdd = file.map(....)
+  if i % 3 == 0:
+    rdd.checkpoint()
+    rdd.count()
+```
+
 ### Page Rank
 List the top 5 node ids with the highest PageRank scores.
 ```

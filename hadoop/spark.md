@@ -130,7 +130,7 @@ spark.stop()
 
 Parameters:
 * --Master: default YARN
-* --jars: additional JAR, Scala,Java only
+* --jars: additional JAR, Scala, Java only
 * --pyfiles: Python only
 * --drover-java-options: pass params to driver
 * --num-executors
@@ -143,8 +143,8 @@ spark-submit program.py
 spark-submit --class WordCount MyJar.jar fileURL
 ```
 
-Configiration Hierarchy
-* program > comand line > properties file > default
+Configuration Hierarchy
+* program > command line > properties file > default
 
 Two modes:
 * Client mode: driver runs on client. Default.
@@ -155,14 +155,51 @@ Two modes:
 #### Partition & Stage
 Operation that preserves partitions: map, flatMap, filter
 Repartition: reduce, sort, group
-* Stage: seriesof operations that do not re-partition 
+* Stage: series of operations that do not re-partition
 * Shuffle demarcates stages.
 * A stage cannot start until previous stage completes.
 * Can manually repartition.
 
+```python
+# how many rdd are in each partition?
+def count(iter):
+  print(sum(1 for _ in iter))
+sc.textFile("shk").mapPartitions(count)
+
+# use generator
+# produces an rdd with IntWritable
+def count(iter):
+  yield sum(1 for _ in iter)
+sc.textFile("shk").mapPartitions(count).sum()
+
+# pass an index (0-based)
+def count(i, iter):
+  yield (i, sum(1 for _ in iter))
+sc.textFile("shk").mapPartitionsWithIndex(count).collect()
+
+# re-partitions
+sc.textFile("shk").repartition(5).getNumPartitions()
+```
+
 #### DAG Scheduler
 * Narrow: need data in one partition (map, filter).
-* Wide operation: gets ashuffle, creates new stage (reduce, sort, ...ByKey).
+* Wide operation: gets a shuffle, creates new stage (reduce, sort, ...ByKey).
 
-#### Persistant (built-in)
-* 
+#### Persistent (built-in)
+* MapReduce has no persistence. After transform, old RDD gets tossed.
+* Only go back to youngest persisted rdd, no need to re-evaluate!
+* Remove: un-persist
+1. Default: in-memory cache.
+  - when node dies, driver assigns re-computation to another node.
+  - always knows where a partition comes from.
+2. Can duplicate to multiple nodes (when re-computation is more expensive then memory)
+3. Alternative: disk (slow)
+
+```python
+# don't throw away. Will use persistently
+rdd.persist()
+```
+
+#### Lectures
+* 20190130  Lecture 4
+* 20190206  Lecture 5
