@@ -186,7 +186,26 @@ ___
 
 #### Homework
 ```python
-spark.read.option("header", "true").option("inferSchema", "true").format("csv").load("electric.csv").show(5)
+import pyspark.sql.functions as functions
+
+# Q1: average res_rate for each ownership type
+e = spark.read \
+  .option("header", "true") \
+  .option("inferSchema", "true") \
+  .csv("/tmp/electric.csv")
+
+for r in e.groupBy("ownership").avg("res_rate").show()
+
+# Q2: for each utility, which one serves most customer?
+z = spark.read.json("zips.json")
+e = spark.read.format("csv").option("reader", "true").load("electric.csv")
+
+# join by zip code
+j = e.join(z, e.zip = z._id)
+j.groupBy(j.utility_name) \
+  .agg(functions.sum("pop").alias("pop")) \
+  .orderBy(s.pop.desc()) \
+  .show(25, False)
 ```
 
 #### Lectures
