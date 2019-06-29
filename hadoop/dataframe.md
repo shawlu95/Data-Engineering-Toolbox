@@ -184,5 +184,10 @@ ___
 * Only in Scala, Java (require STRONG typing), not Python.
 * Represent *typed, object-oriented data*, not tabular.
 
+#### Homework
+```python
+spark.read.option("header", "true").option("inferSchema", "true").format("csv").load("electric.csv").show(5)
+```
+
 #### Lectures
 * 20190206 Lecture 5
