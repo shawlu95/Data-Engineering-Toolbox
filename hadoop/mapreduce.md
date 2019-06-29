@@ -143,3 +143,7 @@ Vessels that contains piece of data.
 
 #### Compressed File
 * Splittable format: **LZO** (lisense trouble), **Snappy**: everyone uses
+
+#### Lectures
+* 20190116 Lecture 2
+* 20190123 Lecture 3
