@@ -114,6 +114,7 @@ ___
   - Never use float or double to store currency value.
 * Character: STRING, CHAR(n), VARCHAR(n).
 * Other: BOOLEAN, TIMESTAMP, BINARY.
+  - more common to use string than TIMESTAMP.
 * Hive does forceful conversion. Impala requires strict typing.
 * Out of range: Hive returns NULL. Impala returns maximum/minimum.
 ![alt-text](assets/conversion.png)
