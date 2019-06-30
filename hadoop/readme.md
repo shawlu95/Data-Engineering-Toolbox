@@ -207,3 +207,4 @@ ___
 * Lecture 7 (20190220): [ml.md](ml.md)
 * Lecture 8 (20190227): [sql.md](sql.md)
 * Lecture 9 (20190306): [sql.md](sql.md)
+* Lecture 10 (20190313): [sql.md](sql.md)

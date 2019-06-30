@@ -6,7 +6,7 @@
 
 #### Hive
 * Hive SQL, close to SQL. (Hive is not a database)
-* Translate SQL to MapReduce/Spark/Tez/LOAP (4 flavors) jobs.
+* Translate SQL to MapReduce/Spark/Tez/LLAP (4 flavors) jobs.
 * Hive is a top layer that translates.
   - parse HiveQL.
   - Optimize.
@@ -309,7 +309,7 @@ ___
 * `REGEXP_EXTRACT` returns matched text
 * `REGEX_REPLACE` replace matched text
 
-**SerDe**
+**SerDe: Serializer/Deserializer**
 * Hive handle CSV: `OpenCSVSerde`
   - Default SerDe: `WITH ROW FORMAT DELIMITED FIELDS TERMINATED BY ','`
 ![alt-text](assets/serde.png)
@@ -466,7 +466,7 @@ ___
 ![alt-text](assets/file_format.png)
 
 ___
-#### Optimization
+#### Hive Optimization
 * Hive Fetch task: cannot do wide operation.
 * Speed: metadata query < fetch task < map only (narrow) < map-reduce (aggregation) < multiple map-reduce jobs
 
@@ -506,6 +506,25 @@ SELECT * FROM orders_bucketed
   TABLESAMPLE (BUCKET 1 OUT OF 10 ON order_id);
 ```
 
+#### Impala Optimization
+Consideration
+* Characteristic of data format, type, size
+* Computing statistics
+* Hardware configuration
+
+![alt-text](assets/impala_opt_1.png)
+![alt-text](assets/impala_opt_2.png)
+![alt-text](assets/impala_opt_3.png)
+![alt-text](assets/impala_opt_4.png)
+![alt-text](assets/impala_opt_5.png)
+![alt-text](assets/impala_opt_6.png)
+![alt-text](assets/impala_opt_7.png)
+![alt-text](assets/impala_opt_8.png)
+![alt-text](assets/impala_opt_9.png)
+![alt-text](assets/impala_opt_10.png)
+![alt-text](assets/impala_opt_11.png)
+![alt-text](assets/impala_opt_12.png)
+![alt-text](assets/impala_opt_13.png)
 ___
 #### Homework
 ![alt-text](assets/sql_hw.png)
@@ -578,4 +597,66 @@ FROM
   (SELECT c1.name n1, c1.lat lat1, c1.lng lng1, c2.name n2, c2.lat lat2, c2.lng lng2
   FROM cities c1, cities c2 WHERE c1.n1 != c2.n2) AS _
 WHERE dist BETWEEN 88 AND 101;
+```
+
+
+![alt-text](assets/sql_hw_1.png)
+
+![alt-text](assets/sql_hw_2.png)
+
+```bash
+hdfs dfs -put /tmp/customer.tsv
+hdfs dfs -mkdir cust
+hdfs dfs -mv customer.tsv cust
+hdfs dfs -ls cust
+hdfs dfs -mv cust /user/hive/warehouse
+```
+
+```sql
+CREATE EXTERNAL TABLE cust
+(
+  id INT,
+  fname STRING,
+  lname STRING,
+  addr STRING,
+  city STRING,
+  state STRING,
+  zip STRING,
+  phone STRING,
+  gender STRING,
+  baby STRING
+) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+
+SELECT * FROM cust LIMIT 10;
+
+-- Question 3
+SELECT * FROM
+(
+  SELECT state, fname, n,
+    RANK() OVER (PARTITION BY state ORDER BY n DESC) AS rank
+  FROM (
+    SELECT UPPER(state) AS state, fname, count(fname) AS n FROM
+    (
+      SELECT * FROM cust WHERE LOWER(gender) = 'f'
+    ) t2
+    GROUP BY state, fname
+  ) t
+) t1
+WHERE rank = 1;
+
+-- Question 4
+-- extract area code
+SELECT REGEXP_EXTRACT(phone, '^[^\\d]*(\\d{3})', 1) AS area FROM cust LIMIT 10;
+
+SELECT state, area, n, avg FROM
+  (SELECT state, area, n, AVG(n) OVER (PARTITION BY state) AS avg FROM
+    (SELECT state, area, COUNT(area) AS n FROM
+      (SELECT UPPER(state),
+        REGEXP_EXTRACT(phone, '^[^\\d]*(\\d{3})', 1) AS area
+      FROM cust
+      ) t1
+    GROUP BY state, area
+    ) t2
+  ) t3
+WHERE n > avg;
 ```
