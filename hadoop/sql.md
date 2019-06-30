@@ -107,6 +107,80 @@ ___
 | Hive           | Yes            | Limited        | No(C6.0)       |
 | Impala         | Yes            | Yes            | Yes            |
 
+* Combine result with UNION, UNION ALL
+  - UNION applies a DISTINCT operation
+* JOIN: inner, left/right join, outer(full) join, semi-join
+  - HIVE supports equality join! Not inequality join (Impala supports).
+    - Impala: `!-, <>, <, <=, >, >=, BETWEEN`
+  - Put largest table first.
+  - `NULL = NULL` is dropped, not treated as match.
+    - To support **NULL-safe join**: `c.cust_id <=> o.cust_id`
+  - avoid cross join:
+
+```sql
+-- cross JOIN
+SLECT * FROM disks CROSS JOIN sizes;
+SLECT * FROM disks JOIN sizes;
+SLECT * FROM disks, sizes;
+```
+
+* LEFT SEMI JOIN: use left table to filter rows on right table.
+
+#### Advanced Syntax
+**Window**
+* `OVER (PARTITION BY ORDER BY)`
+  - each set of rowss is called a window
+* Does not change number of rows (even aggregate functions)
+  - GROUP BY keeps one row per group.
+
+**Rank**
+* Used with dinwos
+* PERCENT_RANK: (RANK - 1) / (NUM_ROWS - 1)
+* CUME_DIST: proportion of rows with values <= CDF
+
+![alt-text](assets/rank.png)
+
+**Offset**
+![alt-text](assets/offset.png)
+![alt-text](assets/lead_lag.png)
+
+**Sliding Window**
+* Relative to current row
+  * ties are cumulative (in the case of sum)
+* Example of bounds:
+  - ROWS BETWEEN 2 PRECEDING AND 3 FOLLOWING
+  - ROWS BETWEEN CURRENT ROW AND 3 FOLLOWING
+  - ROWS BETWEEN UNBOUNDED PRECEDING AND 3 FOLLOWING
+  - ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+  - ROWS BETWEEN 2 PRECEDING AND UNBOUNDED FOLLOWING
+
+![alt-text](assets/sliding_window.png)
+
+```sql
+SELECT this_date, daily,
+  SUM(daily) OVER (ORDER BY this_date
+    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS three_day
+  FROM
+    (SELECT to_date(posted) AS this_date, COUNT(rating) AS daily
+      FROM ratings WHERE prod_id = 1234567
+      GROUP BY this_date HAVING this_date > "2013-04-30") AS s;
+```
+
+* ROWS BETWEEN
+  - ties are cumulative (in the case of sum)
+
+```sql
+SELECT this_date, daily,
+  SUM(amount) OVER (ORDER BY month
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS row_sum,
+  SUM(amount) OVER (ORDER BY month
+    RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS range_sum
+  FROM deposits;
+```
+
+* RANGE BETWEEN
+  - ties are NOT cumulative (in the case of sum)
+
 ___
 #### Datatypes
 * Integer: TINYINT, SMALLINT, INT, BIGINT.
@@ -118,6 +192,147 @@ ___
 * Hive does forceful conversion. Impala requires strict typing.
 * Out of range: Hive returns NULL. Impala returns maximum/minimum.
 ![alt-text](assets/conversion.png)
+
+```sql
+-- check NULL rows
+SELECT c.cust_id, name, total
+FROM customers AS c
+FULL OUTER JOIN
+orders AS o
+WHERE c.cust_id IS NULL
+OR o.total IS NULL;
+```
+
+#### Complex Datatypes: Hive
+* Hyper-denormalizing beyond normal DBMS allows.
+  - e.g. a person may have multiple phone numbers.
+* Array
+  - `phone ARRAY<STRING>`
+  - Set `COLLECTION ITMES TERMINATED BY '|'`
+* Map
+  - `phone MAP<STRING, STRING>`
+  - `COLLECTION ITMES TERMINATED BY '|'`
+  - `MAP KEYS TERMINATED BY ':'`
+* Struct
+  - Each field can have a different data type (e.g. JSON).
+  - `SELECT address.street, address.city`
+  - `address STRUCT<street:STRING, city:STRING>`
+
+```sql
+CREATE TABLE customer_addr (
+  cust_id STRING,
+  name STRING,
+  address STRUCT<street:STRING, city:STRING>)
+ROW FORMAT DELIMITED
+  FIELDS TERMINATED BY ','
+  COLLECTION ITEMS TERMINATED BY '|';
+```
+
+![alt-text](assets/datatype_complex.png)
+
+* Function against collection:
+  - `SIZEOF()`
+  - `EXPLORE(phones)` pass in on column, like `flatMap`
+    * CANNOT USE `SELECT name, EXPLORE(phones) ...`
+    * Use lateral view
+
+```sql
+-- if Alice has 3 phones, 3 rows are returned for Alice
+SELECT name, phone FROM customer_phones
+LATERAL VIEW explore(phones) p AS phone;
+```
+
+#### Complex Datatypes: Impala
+* Lately added. Not as sophisticated as Hive.
+* Data format must be Parquet.
+* Cannot select complex columns directly.
+* `SELECT *` leaves out complex columns.
+
+![alt-text](assets/datatype_complex_impala.png)
+![alt-text](assets/datatype_complex_impala_1.png)
+
+```sql
+SELECT name, phones.item AS phone
+FROM customer_phones_parquet, customer_phones_parquet.phones;
+```
+
+![alt-text](assets/datatype_complex_impala_2.png)
+
+```sql
+SELECT name, phones.value AS home
+FROM customer_phones_parquet, customer_phones_parquet.phones
+WHERE phones.key = 'home';
+```
+
+```sql
+-- struct field
+SELECT name, address.state, address.zipcode,
+FROM customer_phones_parquet;
+```
+
+**Load Complex Data**
+![alt-text](assets/datatype_complex_load.png)
+
+**Hyper-denormalizing**
+* Time 20190306 1:03:30
+* Create, Load, Query
+
+![alt-text](assets/denormalizing.png)
+
+```sql
+INSERT OVERWRITE TABLE rated_products
+  SELECT p.prod_id, p.brand, p.name, p.price,
+    collect_list(named_struct('rating', r.rating, 'message', r.message))
+  FROM product p LEFT OUTER JOIN rating r
+  ON (p.prod_id = r.prod_id)
+  GROUP BY p.prod_id, p.brand, p.name, p.price;
+
+-- query
+SELECT brand, name, COUNT(ratings.rating) num_ratings,
+  AVG(ratings.rating) avg_rating
+FROM rated_products, rated_products.num_ratings
+GROUP BY brand, name
+ORDER BY nvl(avg_rating, 0) DESC
+LIMIT 30;
+```
+
+___
+#### Text Processing
+**Regular Expression**
+* Time 20190306 1:08:00
+* Great for free-form text (e.g. product review)
+* Case sensitive.
+* Impala has case-insensitive: `IREGEX`
+
+![alt-text](assets/regex.png)
+
+* `REGEXP_EXTRACT` returns matched text
+* `REGEX_REPLACE` replace matched text
+
+**SerDe**
+* Hive handle CSV: `OpenCSVSerde`
+  - Default SerDe: `WITH ROW FORMAT DELIMITED FIELDS TERMINATED BY ','`
+![alt-text](assets/serde.png)
+![alt-text](assets/serde_example.png)
+![alt-text](assets/serde_example_1.png)
+
+**Sentiment Analysis**
+* Split: `SELECT split(names, ',') FROM people`
+* Parsing sentences into words: `sentences(txt)`
+  - text is parsed into array of array
+  - each sentence becomes an array of words
+
+**n-gram**
+* Use lower to normalize case.
+* Use `explode` to convert `array` to a set of rows/
+* `ngrams` returns array of struct: string and estimated frequency
+
+```sql
+SELECT explode(ngrams(sentences(lower(txt)), 2, 4)) FROM ...
+
+-- passing a pattern: NULL is placeholder
+SELECT explode(context_ ngrams(sentences(lower(txt)), ARRAY("new", "computer", NULL, NULL), 3)) FROM ...
+```
 
 ___
 #### Interface
@@ -249,3 +464,118 @@ ___
   - Storage and performance requirement;
 
 ![alt-text](assets/file_format.png)
+
+___
+#### Optimization
+* Hive Fetch task: cannot do wide operation.
+* Speed: metadata query < fetch task < map only (narrow) < map-reduce (aggregation) < multiple map-reduce jobs
+
+![alt-text](assets/fetch_task.png)
+
+**Execution Plan**
+![alt-text](assets/exec_plan_0.png)
+![alt-text](assets/exec_plan_1.png)
+
+**Parallel Execution**
+* Turned off by default.
+* Set `hive.exec.parallel` property to true
+
+![alt-text](assets/standalone.png)
+
+**Bucketing**
+* `bucketing` divides data for sampling.
+  * Use a column to divide data into N buckets (same as Map hash partitioning)
+  * without bucketing, sampling is a full-table-scan.
+* Bucketed column should have evenly distributed values (best for ID)
+
+![alt-text](assets/bucketing.png)
+
+```sql
+-- each bucket contains 5% of users
+CREATE TABLE orders_bucketed
+  (order_id INT,
+  cust_id INT,
+  order_date TIMESTAMP)
+  CLUSTERED BY (order_id) INTO 20 BUCKETS;
+
+INSERT OVERWRITE TABLE orders_bucketed
+  SELECT * FROM orders;
+
+-- sample one out of every 10 records (10%)
+SELECT * FROM orders_bucketed
+  TABLESAMPLE (BUCKET 1 OUT OF 10 ON order_id);
+```
+
+___
+#### Homework
+![alt-text](assets/sql_hw.png)
+
+Copy `major_cities.tsv` to HDFS.
+```bash
+hdfs dfs -ls /user/hive/warehousse
+hdfs dfs -ls /user/hive
+hdfs dfs -makedir /user/hive/warehouse/cities
+hdfs dfs -put /tmp/major_cities.tsv /user/hive/warehouse/cities
+
+# confirm: new dir created:
+hdfs dfs -ls !$
+# /user/hive/warehouse/cities/major_cities.tsv
+
+# check the tab-limited file
+head /tmp/major_cities.tsv
+
+# connect beeline or hive (hive is deprecated)
+beeline
+```
+
+Impala Shell
+```bash
+impala-shell --help
+impala-shell -i localhost
+```
+
+```sql
+-- no table
+SHOW tables;
+
+-- have a default database
+SHOW databases
+
+-- create a table, automatically loaded data
+-- table name aligns with DIRECTORY name (not file name)
+-- TAB is treated as column!
+-- not external: drop table will delete file
+CREATE TABLE cities (name STRING, lat DOUBLE, lng DOUBLE);
+
+SHOW tables;
+DESCRIBE cities;
+
+-- fix problems
+CREATE EXTERNAL TABLE cities2 (name STRING, lat DOUBLE, lng DOUBLE)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY "\t";
+
+DESCRIBE cities2;
+DESCRIBE FORMATTED cities2;
+
+-- drop safely; won't delete cities
+DROP TABLE cities2;
+
+-- fix problems
+CREATE EXTERNAL TABLE cities2 (name STRING, lat DOUBLE, lng DOUBLE)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LOCATION '/user/hive/warehouse/cities';
+
+-- show three columns
+SELECT * FROM cities2;
+
+-- cartesian product (cross join)
+-- create a map-reduce job
+SELECT * FROM
+cities2 c1 CROSS JOIN cities2 c2
+
+SELECT
+  n1, n2, ACOS(...) dist
+FROM
+  (SELECT c1.name n1, c1.lat lat1, c1.lng lng1, c2.name n2, c2.lat lat2, c2.lng lng2
+  FROM cities c1, cities c2 WHERE c1.n1 != c2.n2) AS _
+WHERE dist BETWEEN 88 AND 101;
+```
