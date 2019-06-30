@@ -161,3 +161,53 @@ ___
 # specify column and threshold with watermark
 window = words.withWaterMark("timestamp", "10 minutes").groupBy...
 ```
+
+___
+#### Demo
+```python
+import sys
+from pyspark import SparkCont, SparkContext
+from pyspark.streaming import StreamingContext
+
+def update(n, s):
+  """
+  Running average. Adding 1/4 of new value.
+  @n: new data
+  @s: state
+  """
+  if len(n) > 0:
+    n = sum(n)/ float(len(n))
+  else:
+    n = 0
+
+  if s != None:
+    return (n + s * 3.0) / 4.0
+  return n
+
+conf = SparkConf()
+sc = SparkContext(conf=conf)
+
+# 1 second
+ssc = StreamingContext(sc, 1)
+
+sc.setLogLevel("WARN")
+ssc.checkpoint("checkpoint")
+
+"""
+file format:
+x1:y1:z1
+x2:y2:z2
+x3:y3:z3
+...
+
+Note that to keep track of index, use enumerate
+"""
+ssc.textFileStream("/tmp/data")\
+  .flatMap(lambda line: [(i, (v, 1)) for (i, v) in enumerate(line.split(":"))])\
+  .reduceByKey(lambda (v1, c1), (v2, c2): (v1 + v2, c1 + c2))\
+  .mapValues(lambda (v, c): v / float(c))\
+  .updateStateByKey(update)\
+  .pprint()
+ssc.start()
+ssc.awaitTermination()
+```
