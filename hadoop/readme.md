@@ -9,20 +9,21 @@
 7. Transport Cost is Zero. ...
 8. The Network is Homogeneous.
 
-> "Cloudera is the first Hadoop vendor."
-
-> "We live in interesting time because we are receiving letters about the future from Google in the forms of those white papers." –– Doug Cutting
-
-#### 3V
+#### 3V of Big Data
 * Volume
 * Velocity
 * Variety
+
+> "Cloudera is the first Hadoop vendor."
+
+> "We live in interesting time because we are receiving letters about the future from Google in the forms of those white papers." –– Doug Cutting
 
 > "Nothing lets you better do with a mixed bag of stuff than Hadoop does."
 
 > "One of the things that killed Hadoop is machine learning. Spark is worlds ahead."
 
-#### Triage
+___
+#### Hadoop Triage
 * Storage: HDFS (based on GFS)
   - Hadoop stores file in native file system (ext3, ext4, xfs).
   - HDFS may rename and reorganize files. So local file system may appear differently compared from vantage point of HDFS.
@@ -94,6 +95,7 @@
   - Restful interface.
 * No head; tail shows last 1k of data.
 
+___
 #### YARN: Yet Another Resource Negotiator
 * Reinventing the wheel. Successor to original MapReduce.
 * Everything runs through YARN: Impala, Hive, Spark, Spark Streaming.
@@ -132,6 +134,7 @@
 * Apache **NIFI**: intended to be *user-friendly** ingest.
   - answer: who touched what, when (good for enterprise).
 
+___
 #### Apache Spark
 * Founded by Matei Alexandru Zaharia (CS245), founder of Databricks
 * Engine for large-scale data processing
@@ -151,6 +154,7 @@
 
 ![alt-text](assets/hadoop.png)
 
+___
 #### SQL
 * Apache Impala: very high speed, not as scalable or resilient as HIVE.
   - SQL interface, but running against HDFS **file**.
@@ -193,6 +197,7 @@
 * Apache Spot: intrusion detection
 * Apache Tez: alternative to MapReduce engine for Hive
 
+___
 #### Notes of CS246H Hadoop Lab:
 * Lecture 2 (20190116): [mapreduce.md](mapreduce.md)
 * Lecture 3 (20190123): [mapreduce.md](mapreduce.md)
@@ -200,3 +205,4 @@
 * Lecture 5 (20190206): [dataframe.md](dataframe.md)
 * Lecture 6 (20190213): [stream.md](stream.md)
 * Lecture 7 (20190220): [ml.md](ml.md)
+* Lecture 8 (20190227): [sql.md](sql.md)
