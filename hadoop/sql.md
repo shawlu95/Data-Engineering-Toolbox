@@ -84,6 +84,7 @@ DESCRIBE orders;
 DESCRIBE FORMATTED orders;
 ```
 
+___
 #### Syntax
 * Keyword: SELECT, FROM, WHERE, AS (not case sensitive).
 * semicolon terminated;
@@ -106,11 +107,18 @@ DESCRIBE FORMATTED orders;
 | Hive           | Yes            | Limited        | No(C6.0)       |
 | Impala         | Yes            | Yes            | Yes            |
 
+___
 #### Datatypes
+* Integer: TINYINT, SMALLINT, INT, BIGINT.
+* Decimal: FLOAT, DOUBLE, DECIMAL(p, s).
+  - Never use float or double to store currency value.
+* Character: STRING, CHAR(n), VARCHAR(n).
+* Other: BOOLEAN, TIMESTAMP, BINARY.
 * Hive does forceful conversion. Impala requires strict typing.
 * Out of range: Hive returns NULL. Impala returns maximum/minimum.
 ![alt-text](assets/conversion.png)
 
+___
 #### Interface
 * HUE web UI: Hive query editor; Impala query editor; metastore manager.
 
@@ -140,6 +148,7 @@ $ impala-shell -f myquery.sql --delimited --output_delimiter="," -o results.txt
 
 * ODBC/JDBC.
 
+___
 #### Common Operation & Functions
 * Insert operator between columns (`SELECT first - last FROM ...`).
 * Null
@@ -156,6 +165,7 @@ $ impala-shell -f myquery.sql --delimited --output_delimiter="," -o results.txt
   - arguments can be columns, literal values, expressions.
   - named lowercase.
 
+___
 #### Metadata
 * Impala caches metadata. Hive does not.
 * If Hive makes update to HDFS, Impala metadata is out of sync.
@@ -166,6 +176,7 @@ $ impala-shell -f myquery.sql --delimited --output_delimiter="," -o results.txt
 
 ![alt-text](assets/refresh.png)
 
+___
 #### Manage Tables
 * Can set location (absolute path, complete URI (`S3`, `adl`))
 * Can externally create table.
@@ -188,6 +199,7 @@ $ impala-shell -f myquery.sql --delimited --output_delimiter="," -o results.txt
   - schema inferred from query (alias overwrites column names).
 * Can write output to a directory (1:30:40)
 
+___
 #### Partitioning
 * Not available in traditional SQL.
 * All files in a directory are data for **one** table.
@@ -211,6 +223,7 @@ $ impala-shell -f myquery.sql --delimited --output_delimiter="," -o results.txt
     * Running out of memory for name node.
     * May accidentally happens with dynamic partitioning.
 
+___
 #### Format
 * Avoid txt file! (super-inter-operable, human readable, but slow and ugly)
   - representing number as string waste space.
