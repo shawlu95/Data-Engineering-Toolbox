@@ -447,16 +447,36 @@ ___
   - conversion back/forth to native format takes time.
 * SequenceFile:
   - first replacement of txt file.
+  - can store binary data such as image.
+  - Format is Java-specific and tightly coupled with Hadoop.
   - very fast, but poor interoperability. Avoid!
 * **Avro**:
+  - Although xml is easy to read, it cannot contain schema, and machine cannot read it: Avro is the machine solution that xml should have been.
+  - binary data format with schema embedded! Not in metastore.
+    * schema can specify nullable, default value.
+    * can have doc string! Unlike xml.
+  - A machine-readable self-describing dormat.
   - evolvable; binary encoded; **row-based** (add a column later).
   - Created by Doug Cutting.
   - Good for long-term design.
+  - *Best choice for general-purpose storage in Hadoop.*
   - great performance and interoperability.
   - Embed schema in file itself: `CREATE TABLE ... STORED AS AVRO;`
+  - *complex datatypes*: `record, enum, array, map, union, fixed`
+    * record is like `STRUCT` in Hive
 * Columnar file format:
   - RCFile (bad), ORCFile (improved, gaining traction).
-  - **Parquet**: comparable to ORCFile. `CREATE TABLE ... STORED AS PARQUET;`
+* **Parquet**: comparable to ORCFile. `CREATE TABLE ... STORED AS PARQUET;`
+  - columnar: *best for columns-based access patterns.*
+  - developed by Cloudera & Twitter.
+  - support Spark, MapReduce, Hive, Pig, Impala, Crunch
+  - like Avro, schema is embedded in file.
+  - incorporates advanced optimization from Google's *Dremel* paper.
+* Serialization (to bytes) Deserializer (byte to memory)
+  - Java: `Serializable`
+    - original class cannot be modified, or cannot be de-derialized.
+    - Avro comes to rescue: evolvable.
+  - Python: `pickle`
 * Consider:
   - Ingest pattern (row vs. columnar);
   - Tool compatibility;
@@ -525,6 +545,19 @@ Consideration
 ![alt-text](assets/impala_opt_11.png)
 ![alt-text](assets/impala_opt_12.png)
 ![alt-text](assets/impala_opt_13.png)
+
+___
+#### Sqoop
+* MapReduce job: SQL -> Hadoop
+  - find primary keys
+  - run boundary query to see how many records.
+  - Divide records into different mappers.
+* Very difficult syntax.
+* Weak security: requires client to connect to DBMS with password and user_id.
+  * Sqoop2: gives a `Sqoop Server`, but nobody uses Sqoop2.
+![alt-text](assets/sqoop.png)
+![alt-text](assets/sqoop_import.png)
+
 ___
 #### Homework
 ![alt-text](assets/sql_hw.png)
@@ -660,3 +693,6 @@ SELECT state, area, n, avg FROM
   ) t3
 WHERE n > avg;
 ```
+
+#### Use Case
+![alt-text](assets/full_architecture.png)
