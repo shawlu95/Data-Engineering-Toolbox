@@ -299,3 +299,68 @@ Simplify the task of repeatedly and predictably creating groups of related resou
 * Permission: whoever calling template must have permission to operate all resources specified in template.
 
 ![alt-text](assets/cloud_front_eg.png)
+
+___
+### Architecture Design Principles
+- Security:
+  * Five areas: IAM, detective control, Infrastructure protection, data protection, incident response.
+  * Five principles: all layers, enable traceability (logging, auditing), least privilege, securing your system , automate.
+- Reliability:
+  * Recover from issue/failures
+  * Three area: foundation; change management; failure management.
+  * anticipate, respond, prevent failures
+  * test recovery procedure.
+  * automatically recovery.
+  * scale horizontally (increase aggregate system availability).
+- Performance efficiency
+  * select customizable solutions.
+  * continually innovate. Review newly released products.
+  * principles:
+    - democratize advanced tech
+    - go global
+    - use server-less architecture
+    - experiment more often
+- Cost efficiency
+  - Choose cheap resource
+  - elastic scaling to match demand with supply
+  - increase expenditure awareness
+  - optimize over time
+  - principles:
+    * adopt a consumption model
+    * measure overall efficiency
+    * stop investing on data center
+    * analyze and attribute expenditure (Grocery)
+    * Use managed service (e.g. server-less)
+- operational excellence
+  * manage and automate changes
+  * responding to events
+  * define standards
+
+___
+#### Fault Tolerance & High Availability
+* Built-in redundancy of application components.
+* Minimize downtime & human intervention.
+  - Elastic load balancer
+    * distribute incoming load
+    * send metrics to CloudFront
+    * trigger & notify
+  - Elastic IP address
+    * greater fault tolerance
+    * mask failures
+  - Route 53
+    * simple routing;
+    * latency-based routing;
+    * health checks;
+    * DNS failure;
+    * geo-location routing;
+  - Auto-scaling
+    * terminate or start instances
+    * modify capacity
+    * create new resources on demand
+  - CloudWatch
+    * distributed statistics gathering system.
+    * used with auto-scaling
+* Fault tolerance tools:
+  - Simple Queue Service: distributed messaging system
+  - Simple Storage Service: redundancy across devices and facilities in a region.
+  - Relational Database System
