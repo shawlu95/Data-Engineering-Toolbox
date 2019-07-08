@@ -119,7 +119,9 @@ Alternative: Cluster Model
 * Power on different racks are uncorrelated by design.
 * Still keeping a log.
 
-#### Cuncurrency
+#### Concurrency
+* Concurrency achieved by interleaving TXNs such that isolation & consistency are maintained
+* We formalized a notion of serializability that captured such a “good” interleaving schedule
 * The DBMS has freedom to interleave TXNs
 * However, it must pick an interleaving or schedule such that isolation and consistency are maintained
 * A **serial schedule** is one that does not interleave the actions of different transactions
@@ -150,3 +152,20 @@ Schedule S is **conflict serializable** if S is conflict equivalent to some seri
 Ti→Tj if any actions in Ti precede and conflict with any actions in Tj.
 
 >  Theorem: Schedule is conflict serializable if and only if its conflict graph is **acyclic**
+
+#### Two-Phase Locking (2PL)
+Guarantee conflict serializable (serializable, isolation, consistency).
+* An X (exclusive) lock on object before writing. If a TXN holds, no other TXN can get a lock (S or X) on that object.
+* An S (shared) lock on object before reading.  If a TXN holds, no other TXN can get an X lock on that object.
+* All locks held by a TXN are released when TXN completes.
+  - Locks accumulates during transaction.
+  - Released at once upon transaction completion.
+* Deadlock:
+  - detection
+  - prevention
+
+![alt-text](assets/deadlock.png)
+
+Optimistic locking: only check for conflict retroactively, upon commit (e.g. Google Doc)
+
+___
