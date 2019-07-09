@@ -119,7 +119,9 @@ Alternative: Cluster Model
 * Power on different racks are uncorrelated by design.
 * Still keeping a log.
 
-#### Cuncurrency
+#### Concurrency
+* Concurrency achieved by interleaving TXNs such that isolation & consistency are maintained
+* We formalized a notion of serializability that captured such a “good” interleaving schedule
 * The DBMS has freedom to interleave TXNs
 * However, it must pick an interleaving or schedule such that isolation and consistency are maintained
 * A **serial schedule** is one that does not interleave the actions of different transactions
@@ -150,3 +152,88 @@ Schedule S is **conflict serializable** if S is conflict equivalent to some seri
 Ti→Tj if any actions in Ti precede and conflict with any actions in Tj.
 
 >  Theorem: Schedule is conflict serializable if and only if its conflict graph is **acyclic**
+
+#### Two-Phase Locking (2PL)
+Guarantee conflict serializable (serializable, isolation, consistency).
+* An X (exclusive) lock on object before writing. If a TXN holds, no other TXN can get a lock (S or X) on that object.
+* An S (shared) lock on object before reading.  If a TXN holds, no other TXN can get an X lock on that object.
+* All locks held by a TXN are released when TXN completes.
+  - Locks accumulates during transaction.
+  - Released at once upon transaction completion.
+* Deadlock:
+  - detection
+  - prevention
+
+![alt-text](assets/deadlock.png)
+
+Optimistic locking: only check for conflict retroactively, upon commit (e.g. Google Doc)
+
+___
+#### Index
+> An index is a data structure mapping search keys to sets of rows in table
+
+An index can store
+* full rows it points to (primary index), OR
+* pointers to rows (secondary index) [much of our focus]
+
+An index covers for a specific query if the index contains all the needed attributes- meaning the query can be answered using the index alone!
+* The “needed” attributes are the union of those in the SELECT and WHERE clauses
+
+Index operation
+* **Search**: Quickly find all records which meet some condition on the search key attributes
+* **Insert / Remove** entries: Bulk Load / Delete.
+
+#### Sorting, Hashing, Counting
+Buffer: a region in main memory used to store intermediate data between disk and processes
+* a page is fixed-sized array of memory
+* a file is a variable-length list of pages
+![alt-text](assets/buffer.png)
+
+Buffer operating on page and files
+* **Read**(page): Read page from disk --> buffer if not already in buffer
+* **Flush**(page): Evict page from buffer & write to disk if dirty (modified means dirty).
+* **Release**(page): Evict page from buffer without writing to disk
+
+Merge Sorted Files
+* Same as merge sort. O(m+n)
+* When files are large, disk I/O dominate time complexity. 2(m+n)
+* External merge algorithm needs **3** buffer pages to merge two sorted files. (to sort N files, need N + 1 buffer pages)
+  - 2*(N+M) IO operations
+
+Merge large files
+1. Break files into small files (each called a "run").
+2. Sort each sub file.
+3. To external merge sort, merging two files at a time.
+
+![alt-text](assets/3p_buffer.png)
+
+___
+#### B+ Tree
+* *IO-aware data structure*
+* Not binary tree.
+  - fan-out is number of child nodes `d + 1 < f < 2d + 1`
+  - large fan-out, shallow depth
+* make 1 node = 1 physical page
+* Balanced, height adjusted tree
+* Make leaves into a linked list
+* Parameter d = the degree
+  - maximum number of keys in nodes
+  - leave empty room as "slack" (**fill-factor** < 1)
+  - a key is a search key, not table key.
+* Non-Leaf node can have `d~2d` keys.
+  - has pointer to more specific range node
+* Root node can have `1~2d` keys.
+* The N keys in a node defines N + 1 interval of ranges (sorted order)
+* Leaf nodes have pointers to data.
+  - Each leaf node has pointer to next leaf node.
+
+![alt-text](assets/b_tree.png)
+![alt-text](assets/b_tree_io.png)
+
+___
+#### Clustered vs. Unclustered Index
+An index is clustered if the underlying data is ordered in the same way as the index’s data entries
+* No difference in exact lookup.
+* a big difference for range queries too
+
+![alt-text](assets/clustered.png)
