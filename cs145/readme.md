@@ -237,3 +237,76 @@ An index is clustered if the underlying data is ordered in the same way as the i
 * a big difference for range queries too
 
 ![alt-text](assets/clustered.png)
+
+___
+#### Counting (Nov 15 Lecture)
+* Use case: product view
+* Smarter disk strategy (sorting)
+* Smarter partition (hashing, parallelism)
+* Simplify, Approximate the problem
+
+___
+#### Query Optimization (Nov 27 Lecture)
+Bad idea to run query as declared; analyze search cost with hash table, B+ tree. Be aware of IO cost.
+
+```
+T(R): # tuples in table R
+P(R): # pages in table R
+```
+
+#### Two-Table Join
+**Nested Loop Join (NLJ)**
+
+Nested loop has quadratic complexity of disk IO.
+* Switching R, S makes a difference.
+
+![alt-text](assets/join_nested.png)
+
+**Block Nested Loop Join (BNLJ)**
+* Operate on the level of blocks. Not reading one page multiple times.
+* by loading larger chunks of R, we minimize the number of full disk reads of S
+* We only read all of S from disk for every (B-1)-page segment of R!
+* Still the full cross-product, but more done only in memory
+
+![alt-text](assets/join_block_nested.png)
+
+**Index Nested Loop Join (INLJ)**
+* Take advantage of equality join (only applicable to equi-join).
+* Almost linear time IO.
+
+![alt-text](assets/join_index_nested.png)
+
+#### Multi-Table Join
+**Sort Merge Join**
+* only applicable to equi-join
+* To merge N sorted files, need N + 1 page buffer.
+* When join key do not contain duplicate: `P(S) + P(R)`
+* When join keys are all duplicate, get cross product: `P(S) * P(R)`
+* Outperform BNLJ when buffer size is small.
+* Optimization:
+  - B-way join sorted sub-files.
+* Most efficient if tables already sorted (skip sorting phase)!
+
+![alt-text](assets/join_smj_cost.png)
+
+**Hash Join**
+1. Hash Partition: Split R, S into B buckets, using hB on A
+  - if buffer has size B + 1 pages, hash B buckets (for output), leave 1 page for input.
+  - use multiple hash functions to avoid collision.
+2. Per-Partition Join: JOIN tuples in same partition (i.e, same hash value)
+  - do whatever join necessary
+* only applicable to equi-join (hash to same bucket)
+
+![alt-text](assets/join_hpj.png)
+![alt-text](assets/join_hpj_io.png)
+
+compare
+* Hash Joins are highly parallelizable
+* Sort-Merge less sensitive to data skew and result is sorted
+
+**Histogram**
+* Parameters: # of buckets and type (equiwidth, equidepth)
+* require that we update them
+* One popular approach: **compressed histogram**
+  - Store the most frequent values and their counts explicitly
+  - Keep an equiwidth or equidepth one for the rest of the values
