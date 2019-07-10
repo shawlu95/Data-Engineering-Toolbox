@@ -1,4 +1,9 @@
+### Lecture 1-4: SQL
+![alt-text](assets/sql_terms.png)
+
+___
 ### Lecture 5-6: Design Theory
+
 #### First-Normal Form: completely flat
   - Types must all be atomic!
   - Cannot have a cell storing `{cs145, cs229}`
@@ -53,7 +58,7 @@ Good FD: superkey X determines everything else. If not:
 * Simple example: cross product of two columns.
 
 ___
-### Lecture 7: Transaction
+### Lecture 7-9: Transaction
 RAM vs Disk:
 * Fast but limited;
 * Expensive;
@@ -169,7 +174,7 @@ Guarantee conflict serializable (serializable, isolation, consistency).
 Optimistic locking: only check for conflict retroactively, upon commit (e.g. Google Doc)
 
 ___
-#### Index
+#### Lecture 12-14 Index
 > An index is a data structure mapping search keys to sets of rows in table
 
 An index can store
@@ -207,7 +212,6 @@ Merge large files
 
 ![alt-text](assets/3p_buffer.png)
 
-___
 #### B+ Tree
 * *IO-aware data structure*
 * Not binary tree.
@@ -229,8 +233,8 @@ ___
 
 ![alt-text](assets/b_tree.png)
 ![alt-text](assets/b_tree_io.png)
+![alt-text](assets/b_tree_cost.png)
 
-___
 #### Clustered vs. Unclustered Index
 An index is clustered if the underlying data is ordered in the same way as the index’s data entries
 * No difference in exact lookup.
@@ -238,7 +242,6 @@ An index is clustered if the underlying data is ordered in the same way as the i
 
 ![alt-text](assets/clustered.png)
 
-___
 #### Counting (Nov 15 Lecture)
 * Use case: product view
 * Smarter disk strategy (sorting)
@@ -246,7 +249,7 @@ ___
 * Simplify, Approximate the problem
 
 ___
-#### Query Optimization (Nov 27 Lecture)
+#### Lecture 17: Query Optimization (Nov 27)
 Bad idea to run query as declared; analyze search cost with hash table, B+ tree. Be aware of IO cost.
 
 ```
@@ -310,3 +313,25 @@ compare
 * One popular approach: **compressed histogram**
   - Store the most frequent values and their counts explicitly
   - Keep an equiwidth or equidepth one for the rest of the values
+
+#### Relational Algebra
+![alt-text](assets/sql_engine.png)
+
+**Relational Algebra** allows us to translate declarative (SQL) queries into precise and optimizable expressions!
+* Projection produces a subset of columns.
+* a.k.a. "logical optimization"
+
+![alt-text](assets/rel_algebra.png)
+![alt-text](assets/rel_algebra_tree.png)
+
+* To find equivalent tree, perform "push down" projection down the tree.
+* Want to push selection and projection as early as possible!
+  - results in fewer tuples early on
+  - Push projection through (1) selection, (2) join
+  - Push selection through (3) selection, (4) projection, (5) join
+  - Reorder join if needed
+
+> push down selections and projections
+
+#### Data System Design
+![alt-text](assets/cheatsheet.png)
