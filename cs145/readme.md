@@ -124,7 +124,7 @@ Alternative: Cluster Model
 * Power on different racks are uncorrelated by design.
 * Still keeping a log.
 
-#### Concurrency
+#### Concurrency & Scheduling (Consistency & Isolation)
 * Concurrency achieved by interleaving TXNs such that isolation & consistency are maintained
 * We formalized a notion of serializability that captured such a “good” interleaving schedule
 * The DBMS has freedom to interleave TXNs
@@ -135,13 +135,16 @@ Alternative: Cluster Model
 
 Classic anomalies / conflict
 * Unrepeatable read (RW conflict): another transaction completes between two reads of the same transaction.
+![alt-text](assets/rw_conflict.png)
 * Dirty read (WR conflict): read uncommitted data (aborted transaction)
+![alt-text](assets/wr_conflict.png)
 * Inconsistent read (WR conflict): read from partial commit
+![alt-text](assets/inconsistent_read.png)
 * partially lost update (WW conflict)
+![alt-text](assets/ww_conflict.png)
 * cannot have RR conflict.
 
-![alt-text](assets/inconsistent_read.png)
-
+ 
 * Conflict is a property of transaction.
   - Two actions conflict if they are part of different TXNs, involve the same variable, and at least one of them is a write
 * Anomaly is a property of schedule.
@@ -181,8 +184,7 @@ An index can store
 * full rows it points to (primary index), OR
 * pointers to rows (secondary index) [much of our focus]
 
-An index covers for a specific query if the index contains all the needed attributes- meaning the query can be answered using the index alone!
-* The “needed” attributes are the union of those in the SELECT and WHERE clauses
+> An index covers for a specific query if the index contains all the needed attributes- meaning the query can be answered using the index alone!  The “needed” attributes are the union of those in the SELECT and WHERE clauses
 
 Index operation
 * **Search**: Quickly find all records which meet some condition on the search key attributes
@@ -190,8 +192,8 @@ Index operation
 
 #### Sorting, Hashing, Counting
 Buffer: a region in main memory used to store intermediate data between disk and processes
-* a page is fixed-sized array of memory
-* a file is a variable-length list of pages
+* a **page** is fixed-sized array of memory
+* a **file** is a variable-length list of pages
 ![alt-text](assets/buffer.png)
 
 Buffer operating on page and files
@@ -199,11 +201,14 @@ Buffer operating on page and files
 * **Flush**(page): Evict page from buffer & write to disk if dirty (modified means dirty).
 * **Release**(page): Evict page from buffer without writing to disk
 
-Merge Sorted Files
+#### Merge Sorted Files (Lecture 13)
 * Same as merge sort. O(m+n)
 * When files are large, disk I/O dominate time complexity. 2(m+n)
 * External merge algorithm needs **3** buffer pages to merge two sorted files. (to sort N files, need N + 1 buffer pages)
   - 2*(N+M) IO operations
+
+![alt-text](assets/external_merge_sort.png)
+![alt-text](assets/external_merge_sort_io.png)
 
 Merge large files
 1. Break files into small files (each called a "run").
@@ -288,6 +293,7 @@ Nested loop has quadratic complexity of disk IO.
 * Outperform BNLJ when buffer size is small.
 * Optimization:
   - B-way join sorted sub-files.
+  - This allows us to “skip” the last sort & save
 * Most efficient if tables already sorted (skip sorting phase)!
 
 ![alt-text](assets/join_smj_cost.png)
@@ -296,6 +302,7 @@ Nested loop has quadratic complexity of disk IO.
 1. Hash Partition: Split R, S into B buckets, using hB on A
   - if buffer has size B + 1 pages, hash B buckets (for output), leave 1 page for input.
   - use multiple hash functions to avoid collision.
+  - each hash function takes 2 * (P(R) + P(S)) IO.
 2. Per-Partition Join: JOIN tuples in same partition (i.e, same hash value)
   - do whatever join necessary
 * only applicable to equi-join (hash to same bucket)
@@ -305,7 +312,12 @@ Nested loop has quadratic complexity of disk IO.
 
 compare
 * Hash Joins are highly parallelizable
+  - con: bad hash function leads to skew
+  - linear performance depends on smaller relation (hash the smaller relation and can start joining)
 * Sort-Merge less sensitive to data skew and result is sorted
+  - con: backup in case of duplicate join key
+  - linear performance depends on larger relation (sort every single relation before can join)
+
 
 **Histogram**
 * Parameters: # of buckets and type (equiwidth, equidepth)
