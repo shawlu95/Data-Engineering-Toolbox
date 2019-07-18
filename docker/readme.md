@@ -6,6 +6,7 @@ jupyter/all-spark-notebook includes Python, R, and Scala support for Apache Spar
 * ggplot2, sparklyr, and rcurl packages
 * Run all-spark notebook. Image: `d4cbf2f80a2a`
 ```bash
+docker pull jupyter/all-spark-notebook
 docker run -p 10000:8888 jupyter/all-spark-notebook:d4cbf2f80a2a
 ```
 
@@ -14,6 +15,7 @@ docker run -p 10000:8888 jupyter/all-spark-notebook:d4cbf2f80a2a
 * tensorflow and keras machine learning libraries
 * Run tensorflow notebook. Image: `d4cbf2f80a2a`
 ```bash
+docker pull jupyter/tensorflow-notebook
 docker run -p 10001:8888 jupyter/tensorflow-notebook:d4cbf2f80a2a
 ```
 
