@@ -83,6 +83,11 @@ print(row.age)
 * Columnar, not row-oriented; can read a chunk of column quickly!
 * Schema is embedded, easy to transfer around;
 
+Advantages of using Parquet:
+* Organizing by column allows for better compression, as data is more homogeneous. The space savings are very noticeable at the scale of a Hadoop cluster.
+* I/O will be reduced as we can efficiently scan only a subset of the columns while reading the data. Better compression also reduces the bandwidth required to read the input.
+* As we store data of the same type in each column, we can use encoding better suited to the modern processors’ pipeline by making instruction branching more predictable.
+
 #### Schema
 * Infer from Parquet files, Hive metastore, parent DataFrame
 * CSV/JSON (may be incorrect)
