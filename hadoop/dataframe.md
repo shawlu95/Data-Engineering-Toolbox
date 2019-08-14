@@ -3,8 +3,11 @@ As Spark evolves, the core data structure moves from RDD to DataFrame (and Datas
 * A collection of row objects (array that keeps name and types of each field).
 * Schema applies to every row in datasets.
 * **Catalyst** only works for DataFrame, Dataset, not RDD.
-
+  - rearrange execution plan in form of a tree
 ![alt-text](assets/catalyst.png)
+* **tungsten**: improved memory management
+
+![alt-text](assets/catalysy.png)
 
 RDD is unstructured:
 * No schema defining cols and rows.
