@@ -1,0 +1,4 @@
+src,dst,relationship
+a,b,FOLLOWS
+a,c,FOLLOWS
+b,c,FOLLOWS

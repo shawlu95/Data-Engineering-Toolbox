@@ -1,0 +1,31 @@
+src,dst,relationship,cost
+Amsterdam,Utrecht,EROAD,46
+Amsterdam,Den Haag,EROAD,59
+Den Haag,Rotterdam,EROAD,26
+Amsterdam,Immingham,EROAD,369
+Immingham,Doncaster,EROAD,74
+Doncaster,London,EROAD,277
+Hoek van Holland,Den Haag,EROAD,27
+Felixstowe,Hoek van Holland,EROAD,207
+Ipswich,Felixstowe,EROAD,22
+Colchester,Ipswich,EROAD,32
+London,Colchester,EROAD,106
+Gouda,Rotterdam,EROAD,25
+Gouda,Utrecht,EROAD,35
+Den Haag,Gouda,EROAD,32
+Hoek van Holland,Rotterdam,EROAD,33
+Utrecht,Amsterdam,EROAD,46
+Den Haag,Amsterdam,EROAD,59
+Rotterdam,Den Haag,EROAD,26
+Immingham,Amsterdam,EROAD,369
+Doncaster,Immingham,EROAD,74
+London,Doncaster,EROAD,277
+Den Haag,Hoek van Holland,EROAD,27
+Hoek van Holland,Felixstowe,EROAD,207
+Felixstowe,Ipswich,EROAD,22
+Ipswich,Colchester,EROAD,32
+Colchester,London,EROAD,106
+Rotterdam,Gouda,EROAD,25
+Utrecht,Gouda,EROAD,35
+Gouda,Den Haag,EROAD,32
+Rotterdam,Hoek van Holland,EROAD,33

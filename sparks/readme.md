@@ -1,57 +1,33 @@
 ### Spark Examples
 
-#### Scala
-* Native to Spark
-* All API is available in Scala
-* Fastest
-* Language of the future
-
-#### Python, R
-* Language of the day
-* subset of API avaliable
-* R is slowest, for academic use only
-  - okay when calling parallel API
-  - slow when a lot of local executions withing R libraries takes place
-* Python
-  - *interpreted*, can be slow
-
-#### Java
-* Not a data science language (lots of overhead)
-* Language of Hadoop
-* All API is available
-
-![alt-text](assets/lang.png)
-
-#### Functional Programming
-* Lambda calculus
-* Started with Huskell. Scala is most recent representative of FP
-* Python, Java, Scala support rudimentary FD
-
-___
-### Example Problems
 The following examples are taken from Stanford course *CS246 Mining Massive Data Sets* (example 1 ~ 5) and miscellaneous sources.
 
+___
 #### 1. Word Count & Letter Count [[Open](word_count)]
 Count frequency of words and letter from a given text file (e.g. hamlet).
 * Map, flat-map.
 * Regular expression in mapping.
 * Running Spark in Docker image.
 
+___
 #### 2. Recommending Friends [[Open](recommend_friends)]
 Emulating "People You May Know" features. Based on number of common friends, recommend users as potential new friends.
 * De-duplication.
 * Permutation, and use sorting to speed up program.
 
+___
 #### 3. Association Rules [[Open](association_rules)]
 Emulating "People Who Bought this also Bought..." features. Implementing A-priori algorithm.
 * Computing support in custom function.
 * Finding frequent pair and frequent triple quickly.
 
+___
 #### 4. K-means on Spark [[Open](k_means)]
 Explore the effects on convergence of different distance measures and initialization measures.
 * Euclidean vs. Manhattan distance.
 * Random vs. farthest initialization.
 
+___
 #### 5. Page Rank & HITS [[Open](page_rank)]
 Page rank:
 * Matrix *M* is large and is processed as an RDD.

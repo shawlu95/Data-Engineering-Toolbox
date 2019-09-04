@@ -364,3 +364,85 @@ ___
   - Simple Queue Service: distributed messaging system
   - Simple Storage Service: redundancy across devices and facilities in a region.
   - Relational Database System
+
+___
+### Security
+Shared responsibility model
+* Some module is managed by AWS, some managed by You
+
+| Layer           | Note           |
+| :-------------- | :------------- |
+| User Data       | User access    |
+| Application     | Choose your software (above which AWS has zero visibility) |
+| Guest OS        | Choose Linux, windows on EC2 |
+| Hypervisor      | Zen-based |
+| Network         | AWS-managed |
+| Physical        | AWS managed |
+
+* User: a permanent main operator (human, machine)
+  - credentials are permanent until forced rotation
+* Group: a collection of user
+* Role: an authentication method
+  - operator (human, machine)
+  - credentials are temporary
+* policy documents: attached to user, group, or role (a JSON document)
+
+Sample workflow: put a object in S3
+1. an operator makes API call, name object, present credential (username, password, secret key)
+2. **authentication**: Validate authorization credentials. Is it a user, or role, or group.
+3. **authorization**: Take policy documents associated with the operator. Is action sanctioned by policy doc?
+  - Policy may have explicit deny, that overwrites any allow statement.
+  - If hacker gets password, can still cut off authorization.
+
+#### Amazon Inspector
+Assess application for vulnerabilities and deviation from best practices.
+* Integrate security into DevOps
+* Increase development agility.
+* Leverage AWS security expertise.
+* Streamline security compliance.
+* Enforce security standards.
+* Identify application security issues.
+* Accessible via Amazon Inspector Console, CLI, API, SDK
+
+#### AWS Shield
+A managed, DDoS protection service that safeguards applications running on AWS (ELB, Route 53, CloudFront).
+* DoS vs DDoS:
+  - DoS: flooding with network traffic, consume bandwidth.
+  - Distributed DoS:
+    * Infrastructure layer: use multiple sources (botnet)
+    * Application layer attack: misleads web app to connect to other site. Use *web application firewall* to block requests before reaching server.
+Two protection options:
+* AWS Shield Standard: free; always-on; self-service; any AWS resource & region.
+* AWS Shield Advanced: 24/7 access to DDoS response team.
+
+#### Security Compliance
+Measured by customer success. Three components:
+* Risk management
+* Control environment
+* Information security
+
+![alt-text](assets/security_compliance.png)
+
+Workflow
+1. Review trusted information and document compliance requirement.
+2. Design and implement control objectives that meet compliance requirement.
+3. Identify and document controls owned by outside parties.
+4. Verify all control objectives are met and all key controls are designed and operating effectively.
+
+___
+### Pricing
+* Pay for computing, storage, outbound data (tiered)
+  - No pay for inbound data
+* Cost factor
+  * Server clock time
+  * Machine configuration
+  * Deployment type: single/multiple availability zones
+Types of instances
+  - on-demand instance, pay by hour
+  - reserved instance, discount with low up-front charge
+  - spot instance: bid for unused capacity
+**Trusted Advisor**: keep best practices in
+  * cost optimization
+  * performance
+  * security
+  * fault tolerance

@@ -3,11 +3,8 @@ As Spark evolves, the core data structure moves from RDD to DataFrame (and Datas
 * A collection of row objects (array that keeps name and types of each field).
 * Schema applies to every row in datasets.
 * **Catalyst** only works for DataFrame, Dataset, not RDD.
-  - rearrange execution plan in form of a tree
-![alt-text](assets/catalyst.png)
-* **tungsten**: improved memory management
 
-![alt-text](assets/catalysy.png)
+![alt-text](assets/catalyst.png)
 
 RDD is unstructured:
 * No schema defining cols and rows.
@@ -85,11 +82,6 @@ print(row.age)
 * very popularly used for DataFrame
 * Columnar, not row-oriented; can read a chunk of column quickly!
 * Schema is embedded, easy to transfer around;
-
-Advantages of using Parquet:
-* Organizing by column allows for better compression, as data is more homogeneous. The space savings are very noticeable at the scale of a Hadoop cluster.
-* I/O will be reduced as we can efficiently scan only a subset of the columns while reading the data. Better compression also reduces the bandwidth required to read the input.
-* As we store data of the same type in each column, we can use encoding better suited to the modern processors’ pipeline by making instruction branching more predictable.
 
 #### Schema
 * Infer from Parquet files, Hive metastore, parent DataFrame

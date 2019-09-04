@@ -6,7 +6,6 @@ jupyter/all-spark-notebook includes Python, R, and Scala support for Apache Spar
 * ggplot2, sparklyr, and rcurl packages
 * Run all-spark notebook. Image: `d4cbf2f80a2a`
 ```bash
-docker pull jupyter/all-spark-notebook
 docker run -p 10000:8888 jupyter/all-spark-notebook:d4cbf2f80a2a
 ```
 
@@ -15,39 +14,89 @@ docker run -p 10000:8888 jupyter/all-spark-notebook:d4cbf2f80a2a
 * tensorflow and keras machine learning libraries
 * Run tensorflow notebook. Image: `d4cbf2f80a2a`
 ```bash
-docker pull jupyter/tensorflow-notebook
 docker run -p 10001:8888 jupyter/tensorflow-notebook:d4cbf2f80a2a
 ```
 
-#### pytorch/pytorch
-–name gives a name to the container rather than a random one
--v maps the folder in the local machine to a folder inside the container (mounts the first path to the second – divided by the : symbol )
--p defines the ports on the local machine and the container
+___
+#### Pyspark Notebook extended with GraphFrames
 
-```bash
-docker pull pytorch/pytorch
+I found that connecting [GraphFrames](https://github.com/graphframes/graphframes) to [pyspark](http://spark.apache.org/) inside a Jupyter notebook was trickier than I expected. This Dockerfile is the simplest way I found to get it to work. It is based on `jupyter/pyspark-notebook`, which seemed to be a reasonable starting point.
 
-# must use absolute URL
-docker run -it \
-  --name pytorch1 \
-  -v /Users/shawlu/Documents/GitHub/coursera/coursera_ai/week2/pytorch:/workspace \
-  -p 5000:8888 \
-  -p 5001:6006 pytorch/pytorch
-
-# after booting up docker image
-pip install jupyter
-
-jupyter notebook --ip 0.0.0.0 --port 8888 --allow-root &
-
-# change 127.0.0.1:8888 into 127.0.0.1:5000
-http://127.0.0.1:8888/?token=...
-
-# remove stopped container
-docker system prune
+```
+python 3.7
+spark 2.4
+graphframes 0.7.0
 ```
 
+Build the image and take note of the `id` to run the container. Be sure to forward port `8888` when starting it:
+
+```bash
+docker build .
+
+# with GraphFrame
+docker run -t --rm -p 10000:8888 01449e522820
+
+# add neo4j
+docker run -t --rm -p 10000:8888 8ecb36a9026a
+```
+
+The terminal output will contain the notebook url (`localhost:8888`) and a token. Visit the url in a browser and use the token to authenticate.
+
+If everything goes will, the following minimalistic graph should build properly.
+
+```python
+from pyspark.sql import SparkSession
+from graphframes import GraphFrame
+
+session = SparkSession\
+    .builder\
+    .master('local')\
+    .getOrCreate()
+
+nodes = session.createDataFrame(
+  [('1', 'Ada'), ('2', 'Bernd'), ('3', 'Claire')],
+  ['id', 'name'])
+
+edges = session.createDataFrame(
+  [('1', '2'), ('2', '1'), ('1', '3')],
+  ['src', 'dst'])
+
+graph = GraphFrame(nodes, edges)
+graph.inDegrees.show()
+```
+
+#### Useful Commands
+```bash
+# list container
+docker ps -a
+
+# stop & remove container
+docker stop f8c22c8e9d87
+
+# restart container
+docker start -a f8c22c8e9d87
+
+# check port (container must be running)
+docker port 2c3bf3db31ca 8888
+# 0.0.0.0:10000
+
+docker rm f8c22c8e9d87
+```
+
+`-v /some/host/folder/for/work:/home/jovyan/work `- Mounts a host machine directory as folder in the container. Useful when you want to preserve notebooks and other work even after the container is destroyed. You must grant the within-container notebook user or group (`NB_UID` or `NB_GID`) write access to the host directory (e.g., `sudo chown 1000 /some/host/folder/for/work`).
+
+```bash
+sudo chown 1000 /Users/shawlu/Documents/GitHub/Data-Engineering-Toolbox/sparks
+sudo chmod 1000 /Users/shawlu/Documents/GitHub/Data-Engineering-Toolbox/sparks
+sudo chmod -R ugo+rw /Users/shawlu/Documents/GitHub/Data-Engineering-Toolbox/sparks
+
+docker run -t --rm -p 10000:8888 -v /Users/shawlu/Documents/GitHub/Data-Engineering-Toolbox/sparks:/home/jovyan/work f8c22c8e9d87
+```
 
 #### Resource
 * GitHub Jupyter Docker Stacks [[Link](https://github.com/jupyter/docker-stacks)]
 * Image specification [[Link](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-tensorflow-notebook)]
 * jupyter/all-spark-notebook [[Link](https://hub.docker.com/r/jupyter/all-spark-notebook/tags)]
+* Running container [[Link](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/running.html)]
+* Common setup [[Link](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html)]
+* Docker CLI [[Link](https://docs.docker.com/engine/reference/commandline/cli/)]

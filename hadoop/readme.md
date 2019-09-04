@@ -197,18 +197,6 @@ ___
 * Apache Spot: intrusion detection
 * Apache Tez: alternative to MapReduce engine for Hive
 
-#### Parquet
-- developed by Twitter & Cloudera
-- interpoerability:
-  * Engine: Hive. Impala, HAWQ, IBM Big SQL, Drill, Tajo, Pig, Presto
-  * Framework: Spark, MapReduce, Cascading, Crunch, Scalding, Kite
-  * Data Model: Avro, Thrift, ProtocolBuffers, POJOs.
-- efficiency
-  * columnar: column stored in same place, homogenous
-  * nested list borrowed from Google **Dremel**
-  * IO efficient: vertical partitioning + horizontal partitioning
-  * CPU: avoid CPU cache misses
-  * delta encoding: set minimum number to 0, and all others relative to it
 ___
 #### Notes of CS246H Hadoop Lab:
 * Lecture 2 (20190116): [mapreduce.md](mapreduce.md)
