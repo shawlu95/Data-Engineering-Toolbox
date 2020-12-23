@@ -5,6 +5,17 @@
 
 ### Anchor
 * [Chapter 1 Unix Fundamental](#Chapter-1-Unix-Fundamental)
+* [Chapter 2 System](#Chapter-2-System)
+* [Chapter 3 Accounts and Groups](#Chapter-3-Accounts-and-Groups)
+* [Chapter 4 Chapter 4 File System](#Chapter-4-File-System)
+* [Chapter 5 Working Environment](#Chapter-5-Working-Environment)
+* [Chapter 6 Linux Command](#Chapter-6-Linux-Command)
+* [Chapter 8 Advanced Tool](#Chapter-8-Advanced-Tool)
+* [Chapter 9 Sed and Awk](#Chapter-9-Sed-and-Awk)
+* [Chapter 10 Process Management](#Chapter-10-Process-Management)
+* [Chapter 11 Automating Process](#Chapter-11-Automating-Process)
+* [Chapter 13 Shell Scr](#Chapter-13-Shell-Script)
+* [Chapter 14 Advanced Scripting](#Chapter-14-Advanced-Scripting)
 
 ### Chapter 1 Unix Fundamental
 Two base version:
@@ -26,7 +37,7 @@ Concept
 * run level: a group of processes or daemons
 
 ___
-### Chapter 2
+### Chapter 2 System
 * Boot
 * Initialize
 * Login: remote login use: ssh (entrypted), telnet, sftp (entrypted), ftp
@@ -96,7 +107,7 @@ groups shawlu
 ```
 
 ___
-### Chapter 4: File System
+### Chapter 4 File System
 * Everything in unix is considered to be a file
 * Unix is **case-sensitive**; windows and mac OS are case insensitive
 * `/`: root
@@ -169,7 +180,7 @@ File System Management
 * user home dir: `~`
 
 ___
-### Chapter 5: Working Environment
+### Chapter 5 Working Environment
 Shell allows users to interact with kernel
 * Bourne shell
 * Ash shell
@@ -208,7 +219,7 @@ alias dc="clear && cd ~/Documents"
 ```
 
 ___
-### Chapter 6: Linux Command
+### Chapter 6 Linux Command
 Components of a cmmand:
 * prompt
 * target
@@ -262,7 +273,7 @@ Command `unmask`
 * place `unmask` in `./profile` to persist through all shells
 
 ___
-## Chapter 8: Advanced Command
+### Chapter 8 Advanced Tool
 ### Meta-character
 * Do not confuse with wildcard
 * `.` represent any one character/number
@@ -318,7 +329,7 @@ wc -w /tmp/testfile
 ```
 
 ___
-## Chapter 9: Advanced Command
+### Chapter 9 Sed and Awk
 #### Sed
 * stream editor
 
@@ -354,7 +365,7 @@ awk -F":" '{ print "username: " $1 "\t\t\t user id:" $3 }' /etc/passwd
 ```
 
 ___
-### Chapter 10: Job Control & Process Management
+### Chapter 10 Process Management
 * A process is an instance of a running program
 * each process as a process ID `PID`
 * `init` is first process of system boot, ahd has PID=1
@@ -416,7 +427,7 @@ jobs
 ```
 
 ___
-### Chapter 11: Automating Porcess
+### Chapter 11 Automating Process
 * hardware clock is battery powered
 * hardware clock tracks universal time (UTC) aka Greenwich Mean Time (GMT)
 * keep clock in sync with other system: network time protocol (NTP)
@@ -467,7 +478,7 @@ $ at 17:00 -f ~jdoe/bin/backup
 ```
 
 ___
-### Chapter 13: Shell Script
+### Chapter 13 Shell Script
 * variable are interpreted as string, can't do arithmatic. Must use `expr`
 
 ```bash
@@ -551,7 +562,7 @@ echo "Correct."
 ```
 
 ___
-### Chapter 14: Advanced Scripting
+### Chapter 14 Advanced Scripting
 * using backtick to assign output of command to variable:
 ```bash
 Lines=`wc -l textFile`
