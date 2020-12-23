@@ -14,7 +14,7 @@
 * [Chapter 9 Sed and Awk](#Chapter-9-Sed-and-Awk)
 * [Chapter 10 Process Management](#Chapter-10-Process-Management)
 * [Chapter 11 Automating Process](#Chapter-11-Automating-Process)
-* [Chapter 13 Shell Scr](#Chapter-13-Shell-Script)
+* [Chapter 13 Shell Script](#Chapter-13-Shell-Script)
 * [Chapter 14 Advanced Scripting](#Chapter-14-Advanced-Scripting)
 
 ___
