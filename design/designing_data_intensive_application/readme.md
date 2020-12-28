@@ -1,5 +1,5 @@
 ## Designing Data Intensive Application
-* [paperback]()
+* [paperback](https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321/ref=sr_1_1?dchild=1&keywords=Designing+Data+Intensive+Application&qid=1609142920&sr=8-1)
 * data intensive: quantity of data, complexity, speed
 
 ### Anchor
