@@ -7,6 +7,9 @@
 * [Chapter 2: Model and Language](#Chapter-2-Data-Model)
 * [Chapter 3: Storage Engine](#Chapter-3-Storage)
 * [Chapter 4: Encoding and Evolution](#Chapter-4-Encoding-and-Evolution)
+* [Chapter 5: Replication](#Chapter-5-Replication)
+* [Chapter 6: Partition](#Chapter-6-Partition)
+
 ___
 ### Chapter 1 Foundations of Data Systems
 * a special purpose application is made from general purpose components
@@ -236,3 +239,87 @@ ___
   - data is read with low latency (like RPC)
   - data is temporarily stored in a message brokers
   - one-way: sender doesn't get a reply
+
+___
+## Distributed System
+* vertical scaling: shared-memeory achitecture
+* shared-disk architecture: not interesting
+* shared-nothing architecture: aka horizontal scaling
+* partitioning: divide a dataset into subsets
+* replication: provide fail safe redundancy
+
+### Chapter 5 Replication
+Difficulty is how to push changes to all replica
+* leader: accept read request and write request
+* follower: only accept read
+* setting up a follower:
+  1. take a snapshot of leader and copy to follower
+  2. follower requests all changes happened since snapshot (aka caught up)
+* follower fail
+  * a change log is kept in follower
+  * read the last transaction before fail
+  * request from leaders all changes after
+* leader failover: a follower becomes new leader
+  1. decide leader is down: usually a timeout
+  2. elect new leader; appointed by a controller node; most up-to-date follower becomes leaders
+  3. client needs to start sending write request to new leader
+  * old leader’s unreplicated writes to simply be discarded (**dangerous**)
+  * split brain: two leaders accepting write; cannot resolve inconsistency
+* synchronous replication: guarantee up-to-date copy on follower, but slow
+  - synchronous mode usually only have one synchronous follower (semi-synchronous)
+  - one failed node takes down entire system
+* complete async: most popular; no durable write guarantee
+#### Replication Method
+* statement based: sending transaction statement to follower; cannot resolve nondeterministic function/trigger/auto-increment index
+* Write ahead log (WAL): leader appends to log and sent the append across network
+  - con: describe a low level (byte); no inteoprable across different storage format
+* logical (row-based) replication: same idea as log, but use a different log format independent of storage format
+  - usually row-granularity
+* trigger-based replication: offer flexible solution, delegate code to application layer; greater overhead
+
+#### Problem with
+* eventual consistency: when serving read, async replication may lead to stale state. But stale state will eventually be refreshed
+* replication lag: between leader write and follower caught up
+* read-after-write consistency: user should immediately see his edit
+  * when query his own info, read from leader
+  * remember user's last update on server; when update is < 1 minute old, read from leader; otherwise read from follower
+  * send user timestamp, when serving read request, follower must be caught up with the timestamp
+* monotonic read: avoid the situation where user can query a greater lag replica and see older data. Just route the same user to the same replica.
+* consistent prefix read: causality should be preserved;
+  * problematic for partitioned DB; each partition independent (no global ordering)
+  * send causality related writes to same partition
+
+#### Multi-leader
+* suitable scenario: multiple datacenters, each center has one each leader; leader acts as follower to other leader
+* advantage:
+  - lower latency; write can be processed at local data center
+  - tolerance of datacenter outage
+  - tolerance of network problem
+* disadvantage: handling write conflict
+  - avoid: all writes on a particular record are routed to same data center
+  - conflict-free replicated datatype (CRDT)
+  - last write win (LWW): prone to data loss
+  - merge value together
+  - preserve both versions and let use resolve conflict later
+* repair mechanism
+  - read repair
+  - anti-entropy process: constantly looking for differences in replicas and copy from one another
+* quorum consistency
+  - successful write need to be acknowledged by w node
+  - successful read need to query from r node
+  - require r + w > n (number of nodes)
+  - this makes sure there's overlap between read node and successful written nodes
+  - ideal for cases requiring **high availability and low latency**
+* sloppy quorum
+  - if the w node data normally live become unreachable, write to any other w node
+  - when the expected w nodes become available, copy the writes over (`hinted handoff`)
+  - increase write availability
+#### Concurrency and Conflict
+* cannot rely on timestamp to tell who's first; clock synchronization is an issue
+* we can simply say that two operations are concurrent if neither happens before the other
+* client must read version number before submitting write request, which tells what state the write is based on
+* can only overwrite lower or equal version number value
+* version vector: version numbers from all replica
+
+___
+### Chapter 6 Partition
