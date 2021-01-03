@@ -323,3 +323,50 @@ Difficulty is how to push changes to all replica
 
 ___
 ### Chapter 6 Partition
+synonym
+* `shard` in MongoDB, elastic search, SolrCloud
+* `region`: HBase
+* `tablet`: bigtable
+* `vnode` cassandra Riak
+* `vBucket`: Couchbase
+* goal: query load evenly across nodes
+* each node can be leader of some partitions, follower of other partitions
+
+#### Partition Strategy
+* partition by key range (prone to hotspot, e.g. key by time)
+* partition by hash of key: lose efficient range query; evenly spread
+* compromise: compound key, first part identifies partition; second identifies sort order
+
+#### Secondary Index
+How to partition a database with secondary index:
+* document-based partitioning:
+  - local index; partitions are independent
+  - keep a list of document ID for each secondary index key
+  - query by secondary index without primary index will scan all partitions
+  - secondary indexes are stored in the same partition as the primary key and value
+* term-based partitioning
+  - global index
+  - index itself is partitioned
+  - range partition supports query range
+  - hash partition offers more evenly load
+
+#### Rebalancing
+* mode hash N: bad strategy; when N changes, most data will be reassigned partition
+* fixed number of partitions:
+  - set large enough partitions at the beginning
+  - number does not change
+  - assignment of partitions change as cluster scale up/down
+* dynamic partitioning
+  - split partition when reaching configured size (vice versa)
+  - *pre-splitting*: configure a set of partitions on an empty database
+  - partition number proportional to dataset size
+* partition proportional to node
+  - have fixed number of partitions per node
+  - when new node is added, randomly choose fixed number of partitions to split
+
+#### Service Discovery
+How does client know what to ask for
+* contact any node, which forwards request to the right node
+* have partition-aware load balancer to broker request
+* require clients to be fully aware
+* massive parallel processing (MPP) engine: break query into multiple stages and partitions 
