@@ -9,7 +9,7 @@
 * [Chapter 4: Encoding and Evolution](#Chapter-4-Encoding-and-Evolution)
 * [Chapter 5: Replication](#Chapter-5-Replication)
 * [Chapter 6: Partition](#Chapter-6-Partition)
-
+* [Chapter 7: Transaction](#Chapter-7-Transaction)
 ___
 ### Chapter 1 Foundations of Data Systems
 * a special purpose application is made from general purpose components
@@ -369,4 +369,67 @@ How does client know what to ask for
 * contact any node, which forwards request to the right node
 * have partition-aware load balancer to broker request
 * require clients to be fully aware
-* massive parallel processing (MPP) engine: break query into multiple stages and partitions 
+* massive parallel processing (MPP) engine: break query into multiple stages and partitions
+
+___
+## Chapter 7 Transaction
+Transaction is meant to implify the programming model for applications accessing a database
+
+## Chapter 8 Distributed Problem
+* What can go wrong in distributed system: network, clock
+* high performance computing (HPC) is easier working or failing, no partial fail
+* distributed system can have partial fail, and are non-deterministic
+* robust systems must be built on top of less reliable components (there's a limit on how much things can go wrong)
+
+#### Unreliable Network
+* only option is for sender to receive a reply. If no reply, cannot tell what went wrong
+* unbounded delay: there's no upper limit
+  - set an empirical value. too short can cause cascading failure
+  - measure response time variability (jitter)
+* congestion and queueing
+  - if old data is worthless (video conference), use UDP instead of TCP
+* comparing to telephone circuit
+  - circuit has bounded delay, by reserving fixed amount of bandwith
+  - network has unbounded delay because it's designed to handle busty traffic
+  - more efficient busty traffic handling comes at cost of unbounded delay
+  - reserving fixed bandwidth resulting in lower utilization of cable
+
+#### Unreliable Clock
+* clock hardware on computer: a quartz crystal oscillator; can drift; not reliable
+* time-of-day clock/wall-time clock: sync with NTP, may jump forward or backward in time
+* monotonic clock: suitable for measuring duration; absolute value is meaningless. NTP adjusts the frequency of monotonic clock moving forward to catch up or wait.
+* NTP sync can be only as good as network delay
+* logical clock: based on auto-incrementing index; good for ordering events
+* google spanner offers confidence interval;
+  - order is determined only if CI do not overlap;
+  - wait for CI overlap to disappear before committing a write
+* process pause
+  - can last indefinite amount of time
+  - paused process does not know it has been paused   
+  - **lease**: a node obtains a lease, which allows it to be leader for some time. The lease needs to be renewed before expiration. If not renewed, another leader will be elected.
+  - garbage collect can be in round robin fashion, similar to rolling upgrade
+
+#### Truth and Lie
+* truth is defined by majority (quorum)
+* **fencing token** when node obtain a lock, it comes with an auto incrementing number
+  - when server accepts a write, it check the token number
+  - only commit write if the token number is greatest ever observed
+* Byzantines fault
+  - node may be dishonest
+  - In peer-to-peer networks, where there is no such cen‐ tral authority, Byzantine fault tolerance is more relevant.
+
+#### System Model
+An abstraction that describes what things an algorithm may assume.
+1. Synchronous model: assumes bounded network delay, bounded process pau‐ ses, and bounded clock error
+2. Partially synchronous model: sometimes exceeds the bounds for network delay, process pauses, and clock drift
+3. Asynchronous model: no timing assumption
+
+Node models
+* Crash-stop faults: one-way fail, never come back
+* Crash-recovery faults: node recovers; disk storage is preserved; in-memory stuff are lost
+* Byzantine (arbitrary) faults: node can do anything
+
+> For modeling real systems, the partially synchronous model with crash-recovery faults is generally the most useful model.
+
+* Safety: always hold, and if broken, can trace back to exactly when it broke
+* Liveness: may not hold, but will **eventually** hold
