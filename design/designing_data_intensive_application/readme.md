@@ -373,8 +373,125 @@ How does client know what to ask for
 
 ___
 ## Chapter 7 Transaction
-Transaction is meant to implify the programming model for applications accessing a database
+Transactions are an abstraction layer that allows an application to pretend that cer‐ tain concurrency problems and certain kinds of hardware and software faults don’t exist. 
 
+### Guarantee of transaction
+* Atomicity: no intermediate state
+* Consistency: belong to the application layer, not the DB server
+* Isolation/serialization: concurrent transactions behave as if serial; but performance suffers
+* Durability: data survive hardware failure & database crash
+
+#### Multi-object transaction is still needed
+* foreign key references other table
+* denormalized document stores, need to have denormalized copies updated together
+* secondary index needs updated
+
+### Weak Isolation
+Concurrency issue happens when
+* one transaction treads data concurrently modified by another transaction
+* two transactions modify the same data
+
+#### Read Committed
+* no dirty read: only read committed data
+  - read-lock
+* no dirty write: when writing data, only overwrite committed data
+  - use row-level lock
+  - Only one transaction can hold the lock for any given object
+* in practice, have read write lock is inefficient. server keeps both new and old value, and start returning new value only after write lock is released
+* read skew: read several records over a span of time, some records are updated in between
+  - backup a snapshot of database will results in partially old and partially new data
+  - large analytical query scanning big data will observe parts written at different points in time
+* snapshot isolation: each transaction reads from a consistent snapshot of the database
+  - use write lock to prevent dirty write
+  - reader doesn't need lock
+  - readers never block writers, and writers never block readers
+  - db must keep **multiple version of uncommitted writes**: multi-version concurrency control (MVCC)
+* use transaction ID to implement consistent snapshot. A read with transaction ID X can not observe:
+  * all writes of in-progress transactions
+  * writes of aborted transactions
+  * **writes made by transaction of higher ID**
+* how index works with snapshot isolation p 241
+
+#### Prevent Lost Update in Concurrent Write
+* many database server automatically group read-write cycle in transaction
+* have application code to explicitly lock
+* execute in parallel; detect lost update and abort transaction, then retry read-write cycle again
+* compare and set: only set if value is same as old (read) value
+
+### Write Skew
+Dirty writes and lost updates are two of the most common race conditions. Here are more subtle onesL
+* write skew generalizes dirty write: read the same objects, but modify different objects
+  - concurrently booking the same room, after reading it's availalble
+  - multiplayer game two players move to the same position
+* best option: use serializable isolation level
+* second best: explicitly lock the dependent rows
+
+#### Phantom
+When phantom is created:
+1. check some condition
+2. do some action depending on the condition
+3. changes results that alters the condition in step 1
+
+> This effect, where a write in one transaction changes the result of a search query in another transaction, is called a phantom . Snapshot isolation avoids phantoms in read-only queries, but in read-write transactions like the examples we discussed, phantoms can lead to particularly tricky cases of write skew.
+
+* there is no object to which we can attach the locks
+
+### Serializability - Strongest Isolation Level
+* pessimistic to the extreme
+* Methods of implementation
+  * literally serial execution;
+    - only allows stored procedure submitted in a single HTTP
+    - no interactive communication in the transaction
+    - write-heavy transaction can partition dataset so that each transaction only needs to interact with one partition
+  * two-phase locking
+  * Optimistic concurrency control techniques such as serializable snapshot isolation
+
+### Two-Phase Locking
+
+> If transaction A has read an object and transaction B wants to write to that object, B must wait until A commits or aborts before it can continue. (This ensures that B can’t change the object unexpectedly behind A’s back.)
+
+> If transaction A has written an object and transaction B wants to read that object, B must wait until A commits or aborts before it can continue. (Reading an old version of the object, like in Figure 7-1, is not acceptable under 2PL.)
+
+* **pessimistic** concurrency control mechanism
+* not the same as two-phase commit (2PC)
+* writers block not just writers, but readers too
+  - snapshot isolation: readers never block writers, and writers never block readers
+* protect against lost update, write skew
+* a lock on each object in database
+* lock can be **shared** or **exclusive** mode
+  - to read an object, must acquire shared lock (many process can share the shared lock).
+  - cannot read the object if an exclusive lock has been issued
+  - to write to an object, must acquire exclusive lock, only one lock is issued at a time
+  - a transaction must hold the relevant locks until end of transaction
+* deadlock: two transaction waiting for each other to release lock
+  - deadlocks can happen with the lock-based read committed isolation level
+  - more frequent in 2PL
+* performance is weaker than weak isolation
+* unstable latency; slow at high latency percentile
+* predicate lock: belongs to all objects that match some search condition
+  - even to objects that do not yet exist in the database, but which might be added in the future (phantoms)
+  - prevents all write skew and race conditions!
+* index range lock:
+  - predicate lock is inefficient; index range lock is better alternative
+  - not as precise as predicate locks would be
+
+### Serializable Snapshot Isolation Algorithm
+* provides full serializability, but has only a small performance penalty
+* optimistic concurrency control:
+  - allow transactions to happen until something went wrong
+  - retry aborted transaction
+* based on snapshot isolation (prerequisite)
+  - an algorithm for detecting serialization conflicts among writes and determining which transactions to abort.
+* performs better when contention rate is low
+* what to abort:
+  - transaction based on outdated premise
+  - track when a transaction ignores another transaction’s writes due to MVCC visibility rules
+  - notify transaction is the data have been recently read by other transaction (but not blocking)
+* latency much more predictable and less variable.
+* read-only queries can run on a consistent snapshot without requiring any locks
+* requires that read-write transactions be fairly short
+
+___
 ## Chapter 8 Distributed Problem
 * What can go wrong in distributed system: network, clock
 * high performance computing (HPC) is easier working or failing, no partial fail
