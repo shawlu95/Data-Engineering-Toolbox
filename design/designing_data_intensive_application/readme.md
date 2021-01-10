@@ -373,7 +373,7 @@ How does client know what to ask for
 
 ___
 ## Chapter 7 Transaction
-Transactions are an abstraction layer that allows an application to pretend that cer‐ tain concurrency problems and certain kinds of hardware and software faults don’t exist. 
+Transactions are an abstraction layer that allows an application to pretend that cer‐ tain concurrency problems and certain kinds of hardware and software faults don’t exist.
 
 ### Guarantee of transaction
 * Atomicity: no intermediate state
@@ -550,3 +550,93 @@ Node models
 
 * Safety: always hold, and if broken, can trace back to exactly when it broke
 * Liveness: may not hold, but will **eventually** hold
+
+___
+## Chapter 9
+
+### Linearizability
+Make a system appear as if there were only one copy of the data, and all operations on it are atomic
+- Serializability: property of transaction; ok to have different serial order than the transaction time order
+- Linearizability: property of read & write of a register; does **not** prevent transaction race condition
+* serializable snapshot isolation is not linearizable by design
+* Linearizability is required when enforcing hard uniqueness constraint
+  - customers booking the same seat
+  - selling more SKU than in stock
+* A faster algorithm for linearizability does not exist, but weaker consistency models can be much faster
+
+### CAP Theorem
+* sloppy definition, best to avoid
+* Consistency, Availability, Partition tolerance: pick 2 out of 3
+* either Consistent or Available when Partitioned
+* only considers one consistency model (namely linearizability) and one kind of fault (network partitions)
+
+### Ordering and Causality
+* linearizability: a total order of operations:
+* causality defines a partial order,
+* linearizability implies causality
+* causal consistency is the strongest possible consistency model that does not slow down due to network delays, and remains available in the face of network failures
+* lamport timestamp: (counter, node_ID)
+  - provides total ordering:
+  - every node and every client keeps track of the maximum counter value it has seen so far, and includes that maximum on every request.
+  - When a node receives a request or response with a maximum counter value greater than its own counter value, it immediately increases its own counter to that maximum.
+  - cannot tell whether two operations are concurrent or whether they are causally dependent
+* total order broadcast
+
+### Distributed Transaction and Consensus
+FLP Result: there is no algorithm that is always able to reach consensus if there is a risk that a node may crash.
+  - proved in the asynchronous system mode
+  - becomes solvable if can use clocks/timeout and identify crash node
+
+#### Two-phase commit
+Achieving atomic transaction commit across multiple nodes
+- a **blocking** atomic commit protocol
+- phase 0: participant nodes read and write data
+- phase 1: nodes area ready to commit; coordinator sends a prepare request to all nodes
+  - if voting yes, node surrenders the right to abort, must retry if node fails
+- phase 2: coordinator sends commit request if all are ready, otherwise send abort request
+  - if all are ready, coordinator must retry sending commit request infinitely many times if timeout
+  - if coordinator fails, it will read from its disk transaction log when it recovers, and send commit request
+  - when coordinator fails before sending commit request, nodes are stuck "in-doubt"; cannot fail, commit, or time-out
+- performance penalty is heavy (10 times slower) because of network round trip and force disk write of log
+
+#### Heterogeneous Transaction: XA Transaction
+Involve more than one technologies. For example Kafka dumps into Redis.
+* XA: extended architecture
+* a API for interacting with a transaction coordinator
+Disadvantage:
+1. coordinator is single point of failure
+2. coordinator's log makes the server side no longer stateless
+3. tend to amplify failure
+
+### Fault Tolerant Consensus
+Properties of consensus:
+* uniform agreement: every two nodes agree (safety)
+* Integrity: vote only once (safety)
+* validity: only vote on proposed thing (safety)
+* termination: all live node must eventually vote (liveness)
+
+#### Viewstamped Replication
+* a total order algorithm: messages to be delivered exactly once, in the same order
+* equivalent to repeated rounds of consensus
+
+### Membership and Coordination Services
+* ZooKeeper and etcd are designed to hold small amounts of data that can fit entirely in memory
+* That small amount of data is replicated across all the nodes using a fault-tolerant total order broadcast algorithm
+* ZooKeeper is modeled after Google’s Chubby lock service
+  * Linearizable atomic operations (require consensus)
+  * Total ordering of operations
+  * Failure detection
+  * Change notifications  
+* data managed by ZooKeeper is quite slow-changing
+* service discovery: when startup, register network endpoints in a service registry
+* Membership services: keepping track (consensus) of which node is alive/dead
+
+#### Reducible to Consensus Problems
+* Linearizable compare-and-set registers
+* Atomic transaction commit
+* Total order broadcast
+* Locks and leases
+* Membership/coordination service
+* Uniqueness constraint
+
+___
