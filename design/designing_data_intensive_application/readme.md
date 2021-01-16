@@ -1,4 +1,4 @@
-## Designing Data Intensive Application
+algorithms## Designing Data Intensive Application
 * [paperback](https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321/ref=sr_1_1?dchild=1&keywords=Designing+Data+Intensive+Application&qid=1609142920&sr=8-1)
 * data intensive: quantity of data, complexity, speed
 
@@ -10,6 +10,11 @@
 * [Chapter 5: Replication](#Chapter-5-Replication)
 * [Chapter 6: Partition](#Chapter-6-Partition)
 * [Chapter 7: Transaction](#Chapter-7-Transaction)
+* [Chapter 8: Distributed Problem](#Chapter-8-Distributed-Problem)
+* [Chapter 9: Consistency and Consensus](#Chapter-9-Consistency-and-Consensus)
+* [Chapter 10: Batch Processing](#Chapter-10-Batch Processing)
+* [Chapter 12: Stream Processing](#Chapter-12-Stream-Processing)
+
 ___
 ### Chapter 1 Foundations of Data Systems
 * a special purpose application is made from general purpose components
@@ -552,7 +557,7 @@ Node models
 * Liveness: may not hold, but will **eventually** hold
 
 ___
-## Chapter 9
+## Chapter 9 Consistency and Consensus
 
 ### Linearizability
 Make a system appear as if there were only one copy of the data, and all operations on it are atomic
@@ -640,3 +645,116 @@ Properties of consensus:
 * Uniqueness constraint
 
 ___
+### Chapter 10 Batch Processing
+Different types of systems and performance measure:
+* microservice: response time
+* batch: throughput
+* stream: latency
+
+#### Unix Philosophy
+connecting pro‐ grams with pipes
+* make each program do one thing well, break down large project to manageable chunks
+* no interactive input
+* chain different stages with pipes (stdin, stdout)
+* input is immutable
+
+#### Mapreduce
+* HDFS is built on shared-nothing principle
+* putting computation near data to avoid network load
+* the number of map tasks is determined by the number of input file blocks
+* the number of reduce tasks is configured by the job author
+* intermediate outputs are written to tmp files in HDFS
+
+#### Reduce-side Join
+* sort-merge join: sort mapper output, so reducer see records of the same key together
+  - only keep one user's record in memory at a time
+#### Map-side join
+* can handle hotkey (linchpin)
+* no reducer and no sorting
+* **broadcast hash join** join a small table (in memory) with a large table
+* **partitioned hash join** require both tables to be partitioned in the same way
+* **map-side merge join** require same partition method, and sorted data. Input file does not need to fit in memory
+
+#### Batch processing output
+* avoid writing to database with request
+* produce the entire file, and replace the old file in storage (all-or-nothing)
+
+#### Beyond Mapreduce
+* tez and spark engine do not materialize intermediate files (recompute if fail)
+
+___
+## Chapter 11 Stream Processing
+* event: a small, self- contained, immutable object containing the details of something that happened at some point in time.
+* event is not the same as request: request needs to be validated before an event can happen
+
+### Message Broker
+* a server which producer and consumer can connect to
+* consumers may be "fan-out" (different consumer group in kafka) or "load balance" (different process of the same consumer group)
+* consumer is decoupled from producer, async processing
+* message log: a producer sends a message by appending it to the end of the log, and a consumer receives messages by reading the log sequentially
+* broker assigns a monotonically increasing sequence number, or offset, to every message
+* log can be partitioned to different machines, which handle producer and consumers independently
+  - no ordering guarantee across different partitions.
+
+### Database and Stream
+An example of a non-trivial application:
+* an OLTP database to serve user requests
+* a cache to speed up common requests
+* a full-text index to handle search queries
+* a data warehouse for analytics.
+
+#### Methods to keep different systems in sync
+Change data capture
+- observing all data changes written to a database and extracting them in a form in which they can be replicated to other systems
+- one system behaves as leader (truthful) the rest follows
+- to rebuild the db, must have a snapshot to start with (have a known position or offset in the change log)
+- log compaction: remove overwritten key write events, only keep the most recent one
+
+Event Sourcing
+* developed in the domain-driven design (DDD) community
+* CDC treats each record as mutable and uses the current version (compaction)
+* event sourcing keep a log of change events, which are immutable
+* need the full history of events to reconstruct the final state
+* need to save current state so it doesn't have to process full log every time
+
+#### Processing Stream
+Complex event processing
+- designed to search for patterns in stream
+- normal OLAP query keep data static, and query transient
+- CEP keep query static, data flows transient
+
+Stream analytics
+* compute aggregation and statistics across a window
+* probabilisitic algorithm: Bloom filter, HyperLogLog
+* maintaining materializer view
+* search for event in stream based on complex conditions
+
+Time
+* event time: according to device clock
+* processing time: according to server clock
+Estimating true event time:
+1. measure time when event occurred, based on device clock  
+2. measure time when request sent, based on device clock  
+3. measure time when request is received, based on server clock
+4. subtract 2 from 3, add the difference to 1.
+
+Types of window
+* tumbling window
+* hopping window
+* sliding window
+* session window
+
+Stream join
+* stream-stream join (window join)
+* stream-table join (enrichment)
+* table-table join
+
+Fault tolerance
+* batch is "effectively once semantics" since input is treated immutable
+* Flink generates rolling checkpoint and write them to storage
+* spark uses microbatching
+* both checkpoint and microbatch provide exactly once within stream framework, but not across different technologies
+
+Idenpotence
+* An idempotent operation is one that you can perform multiple times, and it has the same effect as if you performed it only once.
+* Even if an operation is not naturally idempotent, it can often be made idempotent with a bit of extra metadata.
