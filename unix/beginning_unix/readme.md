@@ -194,7 +194,8 @@ Shell allows users to interact with kernel
 Display all env variables: `set`
 
 display working directory in the prompt
-`PS1="[\u@\h \w]\$"`
+`PS1="[\u@\h \w]\$ "`
+`PS1="[\u \w]\$ "`
 
 ![alt-text](./assets/control_file.png)
 
