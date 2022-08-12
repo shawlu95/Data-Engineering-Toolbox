@@ -1,4 +1,4 @@
-algorithms## Designing Data Intensive Application
+## Designing Data Intensive Application
 * [paperback](https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321/ref=sr_1_1?dchild=1&keywords=Designing+Data+Intensive+Application&qid=1609142920&sr=8-1)
 * data intensive: quantity of data, complexity, speed
 
@@ -12,7 +12,7 @@ algorithms## Designing Data Intensive Application
 * [Chapter 7: Transaction](#Chapter-7-Transaction)
 * [Chapter 8: Distributed Problem](#Chapter-8-Distributed-Problem)
 * [Chapter 9: Consistency and Consensus](#Chapter-9-Consistency-and-Consensus)
-* [Chapter 10: Batch Processing](#Chapter-10-Batch Processing)
+* [Chapter 10: Batch Processing](#Chapter-10-Batch-Processing)
 * [Chapter 12: Stream Processing](#Chapter-12-Stream-Processing)
 
 ___
@@ -71,7 +71,6 @@ Each layer hides the complexity of lower layer by providing a clean data model
   - poor handling many-many relationships: multiple read, adds application code complexity
   - schema-on-read
   - need to keep document small for locality performance
-  - schema on read
 * graph model: for highly connected data; many-to-many relationships
   - SQL introduces recursive common table expression
   - schema on read
@@ -393,7 +392,7 @@ Transactions are an abstraction layer that allows an application to pretend that
 
 ### Weak Isolation
 Concurrency issue happens when
-* one transaction treads data concurrently modified by another transaction
+* one transaction reads data concurrently modified by another transaction
 * two transactions modify the same data
 
 #### Read Committed
